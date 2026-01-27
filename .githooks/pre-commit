@@ -1,0 +1,42 @@
+#!/bin/sh
+
+echo "🔍 Running code quality checks..."
+echo ""
+
+# Run PHP CS Fixer check
+echo "📝 Checking code style with PHP CS Fixer..."
+docker compose exec -T php composer cs-check
+CS_FIXER_EXIT=$?
+
+if [ $CS_FIXER_EXIT -ne 0 ]; then
+    echo ""
+    echo "❌ PHP CS Fixer found issues!"
+    echo "💡 Run 'docker compose exec php composer cs-fix' to fix them"
+    echo ""
+fi
+
+# Run Rector check
+echo ""
+echo "🔧 Checking code with Rector..."
+docker compose exec -T php composer rector-check
+RECTOR_EXIT=$?
+
+if [ $RECTOR_EXIT -ne 0 ]; then
+    echo ""
+    echo "❌ Rector found issues!"
+    echo "💡 Run 'docker compose exec php composer rector-fix' to fix them"
+    echo ""
+fi
+
+# Exit with error if any check failed
+if [ $CS_FIXER_EXIT -ne 0 ] || [ $RECTOR_EXIT -ne 0 ]; then
+    echo "❌ Commit aborted due to code quality issues"
+    echo ""
+    exit 1
+fi
+
+echo ""
+echo "✅ All checks passed!"
+echo ""
+exit 0
+
