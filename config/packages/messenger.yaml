@@ -1,0 +1,76 @@
+framework:
+    messenger:
+        default_bus: command.bus
+        buses:
+            command.bus:
+                middleware:
+                    - validation
+            sync.command.bus:
+                middleware:
+                    - validation
+            async.command.bus:
+                middleware:
+                    - validation
+            async.priority.command.bus:
+                middleware:
+                    - validation
+            query.bus:
+                middleware:
+                    - validation
+            event.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: false
+                    allow_no_senders: true
+                middleware:
+                    - validation
+
+            core.bus:
+                default_middleware:
+                    enabled: true
+                    allow_no_handlers: true
+                    allow_no_senders: true
+                middleware:
+                    - validation
+        transports:
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'async'
+                        type: 'direct'
+                    queues:
+                        async: ~
+                retry_strategy:
+                    max_retries: 0
+            async.priority:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    exchange:
+                        name: 'async.priority'
+                        type: 'direct'
+                    queues:
+                        async.priority: ~
+                retry_strategy:
+                    max_retries: 0
+            core:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                serializer: App\Infrastructure\Core\Serializer\JsonMessageSerializer
+                options:
+                    exchange:
+                        name: 'core'
+                        type: 'direct'
+                    queues: 
+                        core.download_video:
+                            binding_keys: [core.download_video]
+                        core.extract_sound:
+                            binding_keys: [core.extract_sound]
+                        core.transcript_audio:
+                            binding_keys: [core.transcript_audio]
+                retry_strategy:
+                    max_retries: 0
+
+        routing:
+            'App\Shared\Application\Command\AsynchronousPriorityInterface': async.priority
+            'App\Shared\Application\Command\AsynchronousInterface': async
+            'App\Shared\Application\Command\AsynchronousCoreInterface': core
