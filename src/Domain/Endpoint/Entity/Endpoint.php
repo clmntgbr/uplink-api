@@ -19,6 +19,9 @@ class Endpoint
     use UuidTrait;
     use TimestampableEntity;
 
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $name = null;
+
     #[ORM\Column(type: Types::STRING)]
     private string $baseUri;
 
@@ -42,6 +45,9 @@ class Endpoint
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = true;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $timeoutSeconds = null;
 
     public function getMethod(): MethodEnum
     {
@@ -113,5 +119,25 @@ class Endpoint
     public function setBody(array $body): void
     {
         $this->body = $body;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getTimeoutSeconds(): ?int
+    {
+        return $this->timeoutSeconds;
+    }
+
+    public function setTimeoutSeconds(?int $timeoutSeconds): void
+    {
+        $this->timeoutSeconds = $timeoutSeconds;
     }
 }
