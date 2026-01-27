@@ -29,10 +29,16 @@ class Endpoint
     private MethodEnum $method = MethodEnum::GET;
 
     /**
-     * @var array<string, string>|null
+     * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    private ?array $headers = [];
+    private array $header = [];
+
+    /**
+     * @var array<string, string>
+     */
+    #[ORM\Column(type: Types::JSON)]
+    private array $body = [];
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = true;
@@ -48,19 +54,19 @@ class Endpoint
     }
 
     /**
-     * @return array<string, string>|null
+     * @return array<string, string>
      */
-    public function getHeaders(): ?array
+    public function getHeader(): array
     {
-        return $this->headers;
+        return $this->header;
     }
 
     /**
-     * @param array<string, string>|null $headers
+     * @param array<string, string> $header
      */
-    public function setHeaders(?array $headers): void
+    public function setHeader(array $header): void
     {
-        $this->headers = $headers;
+        $this->header = $header;
     }
 
     public function getBaseUri(): string
@@ -91,5 +97,21 @@ class Endpoint
     public function setIsActive(bool $isActive): void
     {
         $this->isActive = $isActive;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getBody(): array
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param array<string, string> $body
+     */
+    public function setBody(array $body): void
+    {
+        $this->body = $body;
     }
 }
