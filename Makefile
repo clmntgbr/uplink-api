@@ -13,6 +13,9 @@ help: ## Outputs this help screen
 	@grep -E '(^[a-zA-Z0-9\./_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 ## —— Docker 🐳 ————————————————————————————————————————————————————————————————
+build: ## Build the docker images
+	@$(DOCKER_COMP) build --pull --no-cache
+
 up: ## Start the docker hub in detached mode (no logs)
 	@$(DOCKER_COMP) up -d --wait
 
@@ -27,7 +30,7 @@ sh: ## Connect to the PHP container
 
 trust-cert: ## Install local SSL certificate
 	@echo "Installing local SSL certificate..."
-	@docker cp php:/data/caddy/pki/authorities/local/root.crt /tmp/root.crt
+	@docker cp api:/data/caddy/pki/authorities/local/root.crt /tmp/root.crt
 	@if [ "$$(uname)" = "Darwin" ]; then \
 		echo "Detected macOS. Installing certificate..."; \
 		sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain /tmp/root.crt; \
@@ -57,6 +60,17 @@ install-hooks: ## Install git hooks for code quality
 	@echo "✅ Git hooks installed successfully!"
 
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
+entity: ## Create a new entity
+	@$(PHP_CONT) bin/console make:entity
+
+schema: ## Update database schema
+	@$(PHP_CONT) bin/console doctrine:schema:update --force
+
+migration:
+	@$(PHP_CONT) bin/console doctrine:migration:diff
+	@$(PHP_CONT) bin/console doctrine:migration:migrate --no-interaction
+	
+
 rector: ## Run rector
 	@$(PHP_CONT) composer rector-fix
 
@@ -68,3 +82,20 @@ php-cs-fixer: ## Run php-cs-fixer
 
 qa: ## Run all qa tools
 	@$(PHP_CONT) composer qa-fix
+
+jwt:
+	@$(PHP_CONT) bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+consume: ## Start the consumer
+	@$(PHP_CONT) bin/console messenger:consume async.priority async -vv
+
+fabric:
+	@$(PHP_CONT) bin/console messenger:setup-transports
+
+db: ## Start the database
+	@$(PHP_CONT) bin/console doctrine:database:drop -f --if-exists
+	@$(PHP_CONT) bin/console doctrine:database:create
+	@$(PHP_CONT) bin/console doctrine:migrations:migrate --no-interaction
+
+logs: ## Tail the application logs from var/log/dev.log
+	@$(PHP_CONT) tail -f var/log/dev.log
