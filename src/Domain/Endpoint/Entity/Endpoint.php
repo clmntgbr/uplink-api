@@ -7,6 +7,7 @@ namespace App\Domain\Endpoint\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Domain\Endpoint\Enum\MethodEnum;
 use App\Domain\Endpoint\Repository\EndpointRepository;
+use App\Domain\Project\Entity\Project;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -48,6 +49,10 @@ class Endpoint
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $timeoutSeconds = null;
+
+    #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'endpoints')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private Project $project;
 
     public function getMethod(): MethodEnum
     {
@@ -139,5 +144,15 @@ class Endpoint
     public function setTimeoutSeconds(?int $timeoutSeconds): void
     {
         $this->timeoutSeconds = $timeoutSeconds;
+    }
+
+    public function getProject(): Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(Project $project): void
+    {
+        $this->project = $project;
     }
 }
