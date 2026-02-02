@@ -55,12 +55,14 @@ class Endpoint
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private array $header = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private array $body = [];
 
     #[ORM\Column(type: Types::BOOLEAN)]
