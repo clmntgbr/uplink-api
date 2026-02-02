@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Endpoint\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Endpoint\Enum\MethodEnum;
 use App\Domain\Endpoint\Repository\EndpointRepository;
 use App\Domain\Project\Entity\Project;
@@ -12,25 +13,36 @@ use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EndpointRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['endpoint:read']],
+        ),
+    ]
+)]
 class Endpoint
 {
     use UuidTrait;
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
+    #[Groups(['endpoint:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::STRING)]
+    #[Groups(['endpoint:read'])]
     private string $baseUri;
 
     #[ORM\Column(type: Types::STRING)]
+    #[Groups(['endpoint:read'])]
     private string $path;
 
     #[ORM\Column(type: Types::STRING, enumType: MethodEnum::class)]
+    #[Groups(['endpoint:read'])]
     private MethodEnum $method = MethodEnum::GET;
 
     /**
@@ -58,6 +70,12 @@ class Endpoint
     public function __construct()
     {
         $this->id = Uuid::v7();
+    }
+
+    #[Groups(['endpoint:read'])]
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     public function getMethod(): MethodEnum

@@ -15,12 +15,15 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource(
     operations: [
-        new GetCollection(),
+        new GetCollection(
+            normalizationContext: ['groups' => ['project:read']],
+        ),
     ]
 )]
 class Project
@@ -29,9 +32,11 @@ class Project
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING)]
+    #[Groups(['project:read'])]
     private string $name;
 
     #[ORM\Column(type: Types::BOOLEAN)]
+    #[Groups(['project:read'])]
     private bool $isActive = false;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'projects')]
@@ -48,6 +53,12 @@ class Project
     {
         $this->id = Uuid::v7();
         $this->endpoints = new ArrayCollection();
+    }
+
+    #[Groups(['project:read'])]
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     public function getName(): string
@@ -104,5 +115,10 @@ class Project
     public function setUser(User $user): void
     {
         $this->user = $user;
+    }
+
+    public function getIsActive(): bool
+    {
+        return $this->isActive;
     }
 }
