@@ -95,7 +95,8 @@ fabric:
 db: ## Start the database
 	@$(PHP_CONT) bin/console doctrine:database:drop -f --if-exists
 	@$(PHP_CONT) bin/console doctrine:database:create
-	@$(PHP_CONT) bin/console doctrine:migrations:migrate --no-interaction
+	@$(PHP_CONT) bin/console doctrine:schema:update --force
+
 
 logs: ## Tail the application logs from var/log/dev.log
 	@$(PHP_CONT) tail -f var/log/dev.log

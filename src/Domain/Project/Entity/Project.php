@@ -8,11 +8,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Metadata\ApiResource;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Project\Repository\ProjectRepository;
+use App\Domain\User\Entity\User;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 #[ApiResource]
@@ -27,11 +29,21 @@ class Project
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = false;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'projects')]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $user;
+
     /**
      * @var Collection<int, Endpoint>
      */
     #[ORM\OneToMany(targetEntity: Endpoint::class, mappedBy: 'project', cascade: ['persist', 'remove'])]
     private Collection $endpoints;
+
+    public function __construct()
+    {
+        $this->id = Uuid::v7();
+        $this->endpoints = new ArrayCollection();
+    }
 
     public function getName(): string
     {
@@ -78,8 +90,14 @@ class Project
     {
         $this->endpoints->removeElement($endpoint);
     }
-    public function __construct()
+
+    public function getUser(): User
     {
-        $this->endpoints = new ArrayCollection();
+        return $this->user;
+    }
+
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
     }
 }

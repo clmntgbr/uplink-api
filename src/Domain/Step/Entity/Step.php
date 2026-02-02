@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Step\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
@@ -12,9 +13,14 @@ use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StepRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+    ]
+)]
 class Step
 {
     use UuidTrait;
@@ -48,6 +54,11 @@ class Step
      */
     #[ORM\Column(type: Types::JSON)]
     private array $asserts = [];
+
+    public function __construct()
+    {
+        $this->id = Uuid::v7();
+    }
 
     /**
      * @return array<string, string>

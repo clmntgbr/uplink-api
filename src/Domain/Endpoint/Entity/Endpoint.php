@@ -12,6 +12,7 @@ use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EndpointRepository::class)]
 #[ApiResource]
@@ -53,6 +54,11 @@ class Endpoint
     #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'endpoints')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Project $project;
+
+    public function __construct()
+    {
+        $this->id = Uuid::v7();
+    }
 
     public function getMethod(): MethodEnum
     {

@@ -7,9 +7,12 @@ namespace App\Domain\User\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use App\Domain\Project\Entity\Project;
 use App\Domain\User\Repository\UserRepository;
 use App\Presentation\Controller\User\RegisterController;
 use App\Shared\Domain\Trait\UuidTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
@@ -69,27 +72,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
+    #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'user')]
+    private Collection $projects;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
-    }
-
-    public static function create(
-        string $email,
-        string $plainPassword,
-        ?string $firstname = null,
-        ?string $lastname = null,
-        ?string $picture = null,
-    ): self {
-        $user = new self();
-        $user->firstname = $firstname;
-        $user->lastname = $lastname;
-        $user->picture = $picture;
-        $user->email = $email;
-        $user->plainPassword = $plainPassword;
-        $user->roles = ['ROLE_USER'];
-
-        return $user;
+        $this->projects = new ArrayCollection();
     }
 
     #[Groups(['user:read'])]
@@ -231,5 +220,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->picture = $picture;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    /**
+     * @param Collection<int, Project> $projects
+     */
+    public function setProjects(Collection $projects): void
+    {
+        $this->projects = $projects;
+    }
+
+    public function addProject(Project $project): void
+    {
+        $this->projects->add($project);
+    }
+
+    public function removeProject(Project $project): void
+    {
+        $this->projects->removeElement($project);
+    }
+
+    public function getProject(): Project
+    {
+        $project = $this->projects->filter(fn (Project $project) => $project->isActive())->first();
+
+        if (false === $project) {
+            throw new Exception('Project not found');
+        }
+
+        return $project;
     }
 }
