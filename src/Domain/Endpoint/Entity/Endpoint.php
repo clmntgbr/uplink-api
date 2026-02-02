@@ -6,9 +6,11 @@ namespace App\Domain\Endpoint\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Domain\Endpoint\Enum\MethodEnum;
 use App\Domain\Endpoint\Repository\EndpointRepository;
 use App\Domain\Project\Entity\Project;
+use App\Infrastructure\Endpoint\Processor\CreateEndpointProcessor;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,6 +24,10 @@ use Symfony\Component\Uid\Uuid;
         new GetCollection(
             normalizationContext: ['groups' => ['endpoint:read']],
         ),
+        new Post(
+            denormalizationContext: ['groups' => ['endpoint:write']],
+            processor: CreateEndpointProcessor::class,
+        ),
     ]
 )]
 class Endpoint
@@ -30,19 +36,19 @@ class Endpoint
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['endpoint:read'])]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['endpoint:read'])]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private string $baseUri;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['endpoint:read'])]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private string $path;
 
     #[ORM\Column(type: Types::STRING, enumType: MethodEnum::class)]
-    #[Groups(['endpoint:read'])]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private MethodEnum $method = MethodEnum::GET;
 
     /**
@@ -58,9 +64,10 @@ class Endpoint
     private array $body = [];
 
     #[ORM\Column(type: Types::BOOLEAN)]
-    private bool $isActive = true;
+    private bool $isActive = false;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
     private ?int $timeoutSeconds = null;
 
     #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'endpoints')]

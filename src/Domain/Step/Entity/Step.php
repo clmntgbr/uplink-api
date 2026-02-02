@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Step\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
@@ -13,13 +12,12 @@ use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StepRepository::class)]
 #[ApiResource(
-    operations: [
-        new GetCollection(),
-    ]
+    operations: []
 )]
 class Step
 {
@@ -27,10 +25,12 @@ class Step
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::INTEGER)]
+    #[Groups(['step:read'])]
     private int $position;
 
     #[ORM\ManyToOne(targetEntity: Endpoint::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['step:read'])]
     private Endpoint $endpoint;
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'steps')]
@@ -41,18 +41,21 @@ class Step
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['step:read'])]
     private array $variables = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['step:read'])]
     private array $outputs = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
+    #[Groups(['step:read'])]
     private array $asserts = [];
 
     public function __construct()
