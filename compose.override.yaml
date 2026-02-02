@@ -7,12 +7,11 @@ services:
       target: frankenphp_dev
     volumes:
       - ./:/app
-      - ./frankenphp/Caddyfile:/etc/frankenphp/Caddyfile:ro
+      - ./frankenphp/Caddyfile.dev:/etc/frankenphp/Caddyfile:ro
       - ./frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_NAME}:5432/${POSTGRES_DB}?serverVersion=${POSTGRES_VERSION}&charset=utf8
       MESSENGER_TRANSPORT_DSN: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/${RABBITMQ_VHOST}
-      FRANKENPHP_WORKER_CONFIG: watch
       MERCURE_EXTRA_DIRECTIVES: demo
       XDEBUG_MODE: "${XDEBUG_MODE}"
       APP_ENV: "${APP_ENV}"

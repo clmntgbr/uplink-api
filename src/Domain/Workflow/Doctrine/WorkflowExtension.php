@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Endpoint\Doctrine;
+namespace App\Domain\Workflow\Doctrine;
 
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
-use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\User\Entity\User;
+use App\Domain\Workflow\Entity\Workflow;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
 use Override;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 use function sprintf;
 
-final readonly class EndpointExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+final readonly class WorkflowExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     public function __construct(
         private Security $security,
@@ -48,7 +48,7 @@ final readonly class EndpointExtension implements QueryCollectionExtensionInterf
      */
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass): void
     {
-        if (Endpoint::class !== $resourceClass) {
+        if (Workflow::class !== $resourceClass) {
             return;
         }
 
