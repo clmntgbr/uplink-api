@@ -28,7 +28,8 @@ class RegisterController extends AbstractController
     ) {
     }
 
-    public function __invoke(#[MapRequestPayload()] RegisterPayload $payload): JsonResponse {
+    public function __invoke(#[MapRequestPayload()] RegisterPayload $payload): JsonResponse
+    {
         /** @var User $user */
         $user = $this->commandBus->dispatch(new CreateUserCommand(
             email: $payload->getEmail(),

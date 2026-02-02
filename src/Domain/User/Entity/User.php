@@ -72,6 +72,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     private ?string $plainPassword = null;
 
+    /**
+     * @var Collection<int, Project>
+     */
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'user')]
     private Collection $projects;
 
@@ -250,7 +253,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getProject(): Project
     {
-        $project = $this->projects->filter(fn (Project $project) => $project->isActive())->first();
+        $project = $this->projects->filter(fn (Project $project): bool => $project->isActive())->first();
 
         if (false === $project) {
             throw new Exception('Project not found');

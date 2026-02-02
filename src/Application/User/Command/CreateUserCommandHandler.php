@@ -15,7 +15,6 @@ class CreateUserCommandHandler
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly CommandBusInterface $commandBus,
-
     ) {
     }
 

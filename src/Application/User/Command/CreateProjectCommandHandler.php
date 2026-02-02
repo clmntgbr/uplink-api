@@ -6,8 +6,6 @@ namespace App\Application\User\Command;
 
 use App\Domain\Project\Entity\Project;
 use App\Domain\Project\Repository\ProjectRepository;
-use App\Domain\User\Entity\User;
-use App\Domain\User\Repository\UserRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]

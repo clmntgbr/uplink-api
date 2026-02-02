@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Step\Doctrine;
+namespace App\Domain\Project\Doctrine;
 
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryItemExtensionInterface;

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Project\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Project\Repository\ProjectRepository;
 use App\Domain\User\Entity\User;
 use App\Shared\Domain\Trait\UuidTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,7 +18,11 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+    ]
+)]
 class Project
 {
     use UuidTrait;
