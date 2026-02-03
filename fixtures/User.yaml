@@ -1,0 +1,15 @@
+App\Domain\User\Entity\User:
+  user_1:
+    email: "clement@gmail.com"
+    plainPassword: "z0v9!xKEolvZkBZn"
+    roles: ["ROLE_ADMIN"]
+    firstname: 'Clement'
+    lastname: 'Pionnier'
+    
+  user_{2..100}:
+    email: "<email()>"
+    plainPassword: "z0v9!xKEolvZkBZn"
+    roles: ["ROLE_USER"]
+    firstname: '<firstName()>'
+    lastname: '<lastName()>'
+  

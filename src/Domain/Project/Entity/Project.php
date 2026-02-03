@@ -6,9 +6,14 @@ namespace App\Domain\Project\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Project\Repository\ProjectRepository;
 use App\Domain\User\Entity\User;
+use App\Infrastructure\Project\Processor\CreateProjectProcessor;
+use App\Infrastructure\Project\Processor\UpdateProjectProcessor;
+use App\Infrastructure\Project\Validation\Constraint\MaxProjectsPerUser;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -24,6 +29,14 @@ use Symfony\Component\Uid\Uuid;
         new GetCollection(
             normalizationContext: ['groups' => ['project:read']],
         ),
+        new Post(
+            denormalizationContext: ['groups' => ['project:write']],
+            processor: CreateProjectProcessor::class,
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['project:write']],
+            processor: UpdateProjectProcessor::class,
+        ),
     ]
 )]
 class Project
@@ -32,7 +45,7 @@ class Project
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['project:read'])]
+    #[Groups(['project:read', 'project:write'])]
     private string $name;
 
     #[ORM\Column(type: Types::BOOLEAN)]
@@ -41,6 +54,7 @@ class Project
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: false)]
+    #[MaxProjectsPerUser]
     private User $user;
 
     /**
@@ -76,9 +90,23 @@ class Project
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): void
+    public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    #[Groups(['project:write'])]
+    public function setActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        if ($isActive) {
+            $this->user->updateProjects($this);
+        }
+
+        return $this;
     }
 
     /**

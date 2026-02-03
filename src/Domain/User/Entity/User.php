@@ -261,4 +261,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $project;
     }
+
+    public function updateProjects(Project $project): void
+    {
+        $this->projects->map(function (Project $data) use ($project): void {
+            if ($data->getId() === $project->getId()) {
+                return;
+            }
+            $data->setIsActive(false);
+        });
+    }
 }
