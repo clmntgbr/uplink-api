@@ -1,0 +1,10 @@
+App\Domain\Endpoint\Entity\Endpoint:
+  endpoint_{1..10000}:
+    name: "<sentence(3, true)>"
+    project: "@project_*"
+    baseUri: "https://api.example.com"
+    path: "/<slug()>"
+    method: !php/const App\Domain\Endpoint\Enum\MethodEnum::GET
+    header: []
+    body: []
+    timeoutSeconds: "<numberBetween(1, 30)>"

@@ -1,9 +1,9 @@
 App\Domain\Project\Entity\Project:
-  project_{1..100}:
+  project_{1..10}:
     name: "Default Project"
     user: "@user_<current()>"
 
-  project_{101..800}:
+  project_{11..100}:
     name: "<sentence(3, true)>"
     user: "@user_*"
   

@@ -7,7 +7,7 @@ App\Domain\User\Entity\User:
     lastname: 'Pionnier'
     activeProject: "@project_1"
     
-  user_{2..100}:
+  user_{2..10}:
     email: "<email()>"
     plainPassword: "z0v9!xKEolvZkBZn"
     roles: ["ROLE_USER"]
