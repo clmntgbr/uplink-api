@@ -4,7 +4,10 @@ App\Domain\Endpoint\Entity\Endpoint:
     project: "@project_*"
     baseUri: "https://api.example.com"
     path: "/<slug()>"
-    method: !php/const App\Domain\Endpoint\Enum\MethodEnum::GET
-    header: []
-    body: []
+    method: "<randomElement(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])>"
+    header:
+      Content-Type: "application/json"
+    body:
+      name: "<firstName()>"
+      email: "<email()>"
     timeoutSeconds: "<numberBetween(1, 30)>"

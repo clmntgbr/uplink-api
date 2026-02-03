@@ -1,0 +1,14 @@
+App\Domain\Step\Entity\Step:
+  step_{1..10000}:
+    endpoint: "@endpoint_*"
+    workflow: "@workflow_*"
+    position: "<numberBetween(1, 10000)>"
+    variables:
+      name: "<firstName()>"
+      email: "<email()>"
+    outputs:
+      name: "<firstName()>"
+      email: "<email()>"
+    asserts:
+      name: "isString"
+      email: "isEmail"
