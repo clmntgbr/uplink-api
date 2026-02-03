@@ -6,9 +6,12 @@ namespace App\Domain\Workflow\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Domain\Project\Entity\Project;
 use App\Domain\Step\Entity\Step;
 use App\Domain\Workflow\Repository\WorkflowRepository;
+use App\Infrastructure\Project\Validation\Constraint\MaxWorkflowsPerProject;
+use App\Infrastructure\Workflow\Processor\CreateWorkflowProcessor;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,12 +20,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: WorkflowRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['workflow:read', 'step:read']],
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['workflow:write']],
+            validationContext: ['groups' => ['Default', MaxWorkflowsPerProject::GROUP_CREATE]],
+            processor: CreateWorkflowProcessor::class,
         ),
     ]
 )]
@@ -32,7 +41,9 @@ class Workflow
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['workflow:read'])]
+    #[Groups(['workflow:read', 'workflow:write'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 255)]
     private string $name;
 
     /**
@@ -44,6 +55,7 @@ class Workflow
 
     #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'workflows')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[MaxWorkflowsPerProject(groups: [MaxWorkflowsPerProject::GROUP_CREATE])]
     private Project $project;
 
     public function __construct()

@@ -12,6 +12,7 @@ final class MaxProjectsPerUser extends Constraint
 {
     public const int MAX_PROJECTS = 10;
     public const string CODE = 'max.projects.per.user';
+    public const string GROUP_CREATE = 'project:create';
 
     public string $message = 'You have reached the maximum number of projects ({{ limit }}).';
 }

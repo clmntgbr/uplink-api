@@ -10,8 +10,11 @@ use ApiPlatform\Metadata\Post;
 use App\Domain\Endpoint\Enum\MethodEnum;
 use App\Domain\Endpoint\Repository\EndpointRepository;
 use App\Domain\Project\Entity\Project;
+use App\Domain\Step\Entity\Step;
 use App\Infrastructure\Endpoint\Processor\CreateEndpointProcessor;
 use App\Shared\Domain\Trait\UuidTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -76,9 +79,16 @@ class Endpoint
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Project $project;
 
+    /**
+     * @var Collection<int, Step>
+     */
+    #[ORM\OneToMany(targetEntity: Step::class, mappedBy: 'endpoint', cascade: ['persist', 'remove'])]
+    private Collection $steps;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
+        $this->steps = new ArrayCollection();
     }
 
     #[Groups(['endpoint:read'])]
@@ -187,5 +197,26 @@ class Endpoint
     public function setProject(Project $project): void
     {
         $this->project = $project;
+    }
+
+    /**
+     * @return Collection<int, Step>
+     */
+    public function getSteps(): Collection
+    {
+        return $this->steps;
+    }
+
+    public function addStep(Step $step): void
+    {
+        if (! $this->steps->contains($step)) {
+            $this->steps->add($step);
+            $step->setEndpoint($this);
+        }
+    }
+
+    public function removeStep(Step $step): void
+    {
+        $this->steps->removeElement($step);
     }
 }

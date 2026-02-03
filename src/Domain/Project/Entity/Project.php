@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Post;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Project\Repository\ProjectRepository;
 use App\Domain\User\Entity\User;
+use App\Domain\Workflow\Entity\Workflow;
 use App\Infrastructure\Project\Processor\CreateProjectProcessor;
 use App\Infrastructure\Project\Processor\UpdateProjectProcessor;
 use App\Infrastructure\Project\Validation\Constraint\MaxProjectsPerUser;
@@ -31,6 +32,7 @@ use Symfony\Component\Uid\Uuid;
         ),
         new Post(
             denormalizationContext: ['groups' => ['project:write']],
+            validationContext: ['groups' => ['Default', MaxProjectsPerUser::GROUP_CREATE]],
             processor: CreateProjectProcessor::class,
         ),
         new Patch(
@@ -54,7 +56,7 @@ class Project
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: false)]
-    #[MaxProjectsPerUser]
+    #[MaxProjectsPerUser(groups: [MaxProjectsPerUser::GROUP_CREATE])]
     private User $user;
 
     /**
@@ -63,10 +65,17 @@ class Project
     #[ORM\OneToMany(targetEntity: Endpoint::class, mappedBy: 'project', cascade: ['persist', 'remove'])]
     private Collection $endpoints;
 
+    /**
+     * @var Collection<int, Workflow>
+     */
+    #[ORM\OneToMany(targetEntity: Workflow::class, mappedBy: 'project', cascade: ['persist', 'remove'])]
+    private Collection $workflows;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
         $this->endpoints = new ArrayCollection();
+        $this->workflows = new ArrayCollection();
     }
 
     #[Groups(['project:read'])]
@@ -148,5 +157,26 @@ class Project
     public function getIsActive(): bool
     {
         return $this->isActive;
+    }
+
+    /**
+     * @return Collection<int, Workflow>
+     */
+    public function getWorkflows(): Collection
+    {
+        return $this->workflows;
+    }
+
+    public function addWorkflow(Workflow $workflow): void
+    {
+        if (! $this->workflows->contains($workflow)) {
+            $this->workflows->add($workflow);
+            $workflow->setProject($this);
+        }
+    }
+
+    public function removeWorkflow(Workflow $workflow): void
+    {
+        $this->workflows->removeElement($workflow);
     }
 }

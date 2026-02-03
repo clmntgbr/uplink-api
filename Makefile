@@ -69,7 +69,6 @@ schema: ## Update database schema
 migration:
 	@$(PHP_CONT) bin/console doctrine:migration:diff
 	@$(PHP_CONT) bin/console doctrine:migration:migrate --no-interaction
-	
 
 rector: ## Run rector
 	@$(PHP_CONT) composer rector-fix
@@ -98,7 +97,7 @@ db: ## Start the database
 	@$(PHP_CONT) bin/console doctrine:schema:update --force
 	@$(PHP_CONT) bin/console hautelook:fixtures:load --no-interaction
 
-fixtures:
+fixtures: ## Load fixtures
 	@$(PHP_CONT) bin/console hautelook:fixtures:load --no-interaction
 
 logs: ## Tail the application logs from var/log/dev.log
