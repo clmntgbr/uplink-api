@@ -2,10 +2,8 @@ App\Domain\Project\Entity\Project:
   project_{1..100}:
     name: "Default Project"
     user: "@user_<current()>"
-    isActive: true
 
   project_{101..800}:
     name: "<sentence(3, true)>"
     user: "@user_*"
-    isActive: false
   

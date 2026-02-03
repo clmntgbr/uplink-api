@@ -50,10 +50,6 @@ class Project
     #[Groups(['project:read', 'project:write'])]
     private string $name;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    #[Groups(['project:read'])]
-    private bool $isActive = false;
-
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'projects')]
     #[ORM\JoinColumn(nullable: false)]
     #[MaxProjectsPerUser(groups: [MaxProjectsPerUser::GROUP_CREATE])]
@@ -94,25 +90,11 @@ class Project
         $this->name = $name;
     }
 
-    public function isActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-
     #[Groups(['project:write'])]
-    public function setActive(bool $isActive): self
+    public function setActive(bool $active): self
     {
-        $this->isActive = $isActive;
-
-        if ($isActive) {
-            $this->user->updateProjects($this);
+        if ($active) {
+            $this->user->setActiveProject($this);
         }
 
         return $this;
@@ -154,11 +136,6 @@ class Project
         $this->user = $user;
     }
 
-    public function getIsActive(): bool
-    {
-        return $this->isActive;
-    }
-
     /**
      * @return Collection<int, Workflow>
      */
@@ -178,5 +155,11 @@ class Project
     public function removeWorkflow(Workflow $workflow): void
     {
         $this->workflows->removeElement($workflow);
+    }
+
+    #[Groups(['project:read'])]
+    public function getIsActive(): bool
+    {
+        return $this->user->getActiveProject() === $this;
     }
 }

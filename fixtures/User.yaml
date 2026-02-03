@@ -5,6 +5,7 @@ App\Domain\User\Entity\User:
     roles: ["ROLE_ADMIN"]
     firstname: 'Clement'
     lastname: 'Pionnier'
+    activeProject: "@project_1"
     
   user_{2..100}:
     email: "<email()>"
@@ -12,4 +13,4 @@ App\Domain\User\Entity\User:
     roles: ["ROLE_USER"]
     firstname: '<firstName()>'
     lastname: '<lastName()>'
-  
+    activeProject: "@project_<current()>"

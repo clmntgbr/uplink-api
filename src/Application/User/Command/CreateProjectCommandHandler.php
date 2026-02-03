@@ -21,7 +21,7 @@ class CreateProjectCommandHandler
         $project = new Project();
         $project->setName($command->getName());
         $project->setUser($command->getUser());
-        $project->setIsActive($command->isActive());
+        $project->setActive(true);
 
         $this->projectRepository->save($project, true);
 

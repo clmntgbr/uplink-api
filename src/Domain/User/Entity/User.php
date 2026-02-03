@@ -78,6 +78,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'user')]
     private Collection $projects;
 
+    #[ORM\OneToOne(targetEntity: Project::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(['user:read'])]
+    private ?Project $activeProject = null;
+
     public function __construct()
     {
         $this->id = Uuid::v7();
@@ -251,24 +256,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->projects->removeElement($project);
     }
 
-    public function getProject(): Project
+    public function setActiveProject(Project $project): void
     {
-        $project = $this->projects->filter(fn (Project $project): bool => $project->isActive())->first();
-
-        if (false === $project) {
-            throw new Exception('Project not found');
-        }
-
-        return $project;
+        $this->activeProject = $project;
     }
 
-    public function updateProjects(Project $project): void
+    public function getProject(): Project
     {
-        $this->projects->map(function (Project $data) use ($project): void {
-            if ($data->getId() === $project->getId()) {
-                return;
-            }
-            $data->setIsActive(false);
-        });
+        return $this->activeProject;
+    }
+
+    public function getActiveProject(): ?Project
+    {
+        return $this->activeProject;
     }
 }
