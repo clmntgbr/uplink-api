@@ -30,6 +30,7 @@ final class MaxProjectsPerUserValidator extends ConstraintValidator
 
         if ($value->getProjects()->count() >= MaxProjectsPerUser::MAX_PROJECTS) {
             $this->context->buildViolation($constraint->message)
+                ->setCode(MaxProjectsPerUser::CODE)
                 ->setParameter('{{ limit }}', (string) MaxProjectsPerUser::MAX_PROJECTS)
                 ->addViolation();
         }
