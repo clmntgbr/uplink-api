@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraint;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class MaxProjectsPerUser extends Constraint
 {
-    public const int MAX_PROJECTS = 30;
+    public const int MAX_PROJECTS = 10;
     public const string CODE = 'max.projects.per.user';
 
     public string $message = 'You have reached the maximum number of projects ({{ limit }}).';
