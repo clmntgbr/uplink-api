@@ -68,6 +68,13 @@ class Endpoint
     #[Groups(['endpoint:read', 'endpoint:write'])]
     private array $body = [];
 
+    /**
+     * @var array<string, string>
+     */
+    #[ORM\Column(type: Types::JSON)]
+    #[Groups(['endpoint:read', 'endpoint:write'])]
+    private array $param = [];
+
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = false;
 
@@ -218,5 +225,17 @@ class Endpoint
     public function removeStep(Step $step): void
     {
         $this->steps->removeElement($step);
+    }
+
+    public function getParam(): array
+    {
+        return $this->param;
+    }
+
+    public function setParam(array $param): static
+    {
+        $this->param = $param;
+
+        return $this;
     }
 }
