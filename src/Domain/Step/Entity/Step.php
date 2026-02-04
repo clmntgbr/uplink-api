@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Step\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
@@ -17,8 +20,14 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StepRepository::class)]
 #[ApiResource(
-    operations: []
+    operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['step:read', 'endpoint:read']],
+            queryParameterValidationEnabled: true,
+        ),
+    ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['workflow.id' => 'exact'])]
 class Step
 {
     use UuidTrait;
@@ -30,7 +39,7 @@ class Step
 
     #[ORM\ManyToOne(targetEntity: Endpoint::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['step:read'])]
+    #[Groups(['step:read', 'endpoint:read'])]
     private Endpoint $endpoint;
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'steps')]
@@ -61,6 +70,12 @@ class Step
     public function __construct()
     {
         $this->id = Uuid::v7();
+    }
+
+    #[Groups(['step:read'])]
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     /**

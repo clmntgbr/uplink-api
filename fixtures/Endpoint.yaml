@@ -10,6 +10,6 @@ App\Domain\Endpoint\Entity\Endpoint:
     body:
       name: "<firstName()>"
       email: "<email()>"
-    param:
+    query:
       id: "<uuid()>"
     timeoutSeconds: "<numberBetween(1, 30)>"

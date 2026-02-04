@@ -58,7 +58,7 @@ final readonly class StepExtension implements QueryCollectionExtensionInterface,
         }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->andWhere(sprintf('%s.project = :project', $rootAlias));
-        $queryBuilder->setParameter('project', $user->getProject());
+        $queryBuilder->andWhere(sprintf('%s.workflow IN (:workflows)', $rootAlias));
+        $queryBuilder->setParameter('workflows', $user->getProject()->getWorkflows()->toArray());
     }
 }

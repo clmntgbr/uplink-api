@@ -23,6 +23,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: EndpointRepository::class)]
 #[ApiResource(
+    order: ['createdAt' => 'DESC'],
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['endpoint:read']],
@@ -73,7 +74,7 @@ class Endpoint
      */
     #[ORM\Column(type: Types::JSON)]
     #[Groups(['endpoint:read', 'endpoint:write'])]
-    private array $param = [];
+    private array $query = [];
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = false;
@@ -227,14 +228,14 @@ class Endpoint
         $this->steps->removeElement($step);
     }
 
-    public function getParam(): array
+    public function getQuery(): array
     {
-        return $this->param;
+        return $this->query;
     }
 
-    public function setParam(array $param): static
+    public function setQuery(array $query): static
     {
-        $this->param = $param;
+        $this->query = $query;
 
         return $this;
     }
