@@ -40,47 +40,47 @@ class Endpoint
     use TimestampableEntity;
 
     #[ORM\Column(type: Types::STRING, nullable: true)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private string $baseUri;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private string $path;
 
     #[ORM\Column(type: Types::STRING, enumType: MethodEnum::class)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private MethodEnum $method = MethodEnum::GET;
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private array $header = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private array $body = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private array $query = [];
 
     #[ORM\Column(type: Types::BOOLEAN)]
     private bool $isActive = false;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
-    #[Groups(['endpoint:read', 'endpoint:write'])]
+    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private ?int $timeoutSeconds = null;
 
     #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'endpoints')]

@@ -23,7 +23,7 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource(
     operations: [
         new GetCollection(
-            normalizationContext: ['groups' => ['step:read', 'endpoint:read']],
+            normalizationContext: ['groups' => ['step:read']],
             strictQueryParameterValidation: true,
             parameters: [
                 'workflow' => new QueryParameter(description: 'Filter steps by workflow'),
@@ -31,6 +31,7 @@ use Symfony\Component\Uid\Uuid;
         ),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['workflow' => 'exact'])]
 class Step
 {
     use UuidTrait;
@@ -47,7 +48,6 @@ class Step
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['step:read'])]
     private Workflow $workflow;
 
     /**

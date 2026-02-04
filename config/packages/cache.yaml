@@ -17,3 +17,9 @@ framework:
         # Namespaced pools use the above "app" backend by default
         #pools:
             #my.dedicated.cache: null
+
+# In dev: use in-memory cache so changes (entities, API resources) are visible without cache:clear
+when@dev:
+    framework:
+        cache:
+            app: cache.adapter.array

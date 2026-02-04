@@ -6,7 +6,7 @@ PHP_CONT = $(DOCKER_COMP) exec php
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY        : help up down remove sh trust-cert env entity schema install-hooks
+.PHONY        : help up down remove sh trust-cert env entity schema install-hooks cache-clear
 
 ## —— 🎵 🐳 The Symfony Docker Makefile 🐳 🎵 ——————————————————————————————————
 help: ## Outputs this help screen
@@ -60,6 +60,9 @@ install-hooks: ## Install git hooks for code quality
 	@echo "✅ Git hooks installed successfully!"
 
 ## —— Symfony 🎵 ———————————————————————————————————————————————————————————————
+cache-clear: ## Clear all caches (run when API metadata/docs or config feel stale)
+	@$(PHP_CONT) bin/console cache:clear
+
 entity: ## Create a new entity
 	@$(PHP_CONT) bin/console make:entity
 
