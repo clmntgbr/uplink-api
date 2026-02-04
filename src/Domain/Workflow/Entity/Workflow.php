@@ -50,7 +50,6 @@ class Workflow
      * @var Collection<int, Step>
      */
     #[ORM\OneToMany(targetEntity: Step::class, mappedBy: 'workflow', cascade: ['persist', 'remove'])]
-    #[Groups(['step:read'])]
     private Collection $steps;
 
     #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'workflows')]

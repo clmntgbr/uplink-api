@@ -8,6 +8,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\QueryParameter;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
@@ -23,11 +24,13 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['step:read', 'endpoint:read']],
-            queryParameterValidationEnabled: true,
+            strictQueryParameterValidation: true,
+            parameters: [
+                'workflow' => new QueryParameter(description: 'Filter steps by workflow'),
+            ]
         ),
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['workflow.id' => 'exact'])]
 class Step
 {
     use UuidTrait;
@@ -39,11 +42,12 @@ class Step
 
     #[ORM\ManyToOne(targetEntity: Endpoint::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['step:read', 'endpoint:read'])]
+    #[Groups(['step:read'])]
     private Endpoint $endpoint;
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['step:read'])]
     private Workflow $workflow;
 
     /**
