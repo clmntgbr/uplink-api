@@ -8,6 +8,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\QueryParameter;
 use App\Domain\Endpoint\Entity\Endpoint;
@@ -30,11 +31,15 @@ use Symfony\Component\Uid\Uuid;
             strictQueryParameterValidation: true,
             parameters: [
                 'workflow' => new QueryParameter(description: 'Filter steps by workflow'),
+                'itemsPerPage' => new QueryParameter(description: 'Items per page'),
             ]
         ),
         new Post(
             denormalizationContext: ['groups' => ['step:write']],
             validationContext: ['groups' => [MaxStepsPerWorkflow::GROUP_CREATE]],
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['step:write']],
         ),
     ]
 )]
@@ -70,7 +75,7 @@ class Step
      */
     #[ORM\Column(type: Types::JSON)]
     #[Groups(['step:read'])]
-    private array $outputs = [];
+    private array $response = [];
 
     /**
      * @var array<string, string>
@@ -109,17 +114,17 @@ class Step
     /**
      * @return array<string, string>
      */
-    public function getOutputs(): array
+    public function getResponse(): array
     {
-        return $this->outputs;
+        return $this->response;
     }
 
     /**
-     * @param array<string, string> $outputs
+     * @param array<string, string> $response
      */
-    public function setOutputs(array $outputs): void
+    public function setResponse(array $response): void
     {
-        $this->outputs = $outputs;
+        $this->response = $response;
     }
 
     public function getPosition(): int

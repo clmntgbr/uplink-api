@@ -13,7 +13,6 @@ use App\Domain\Project\Repository\ProjectRepository;
 use App\Domain\User\Entity\User;
 use App\Domain\Workflow\Entity\Workflow;
 use App\Infrastructure\Project\Processor\CreateProjectProcessor;
-use App\Infrastructure\Project\Processor\UpdateProjectProcessor;
 use App\Infrastructure\Project\Validation\Constraint\MaxProjectsPerUser;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -37,7 +36,6 @@ use Symfony\Component\Uid\Uuid;
         ),
         new Patch(
             denormalizationContext: ['groups' => ['project:write']],
-            processor: UpdateProjectProcessor::class,
         ),
     ]
 )]
