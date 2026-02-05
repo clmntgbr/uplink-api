@@ -8,10 +8,12 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\QueryParameter;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
+use App\Infrastructure\Project\Validation\Constraint\MaxStepsPerWorkflow;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -21,6 +23,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StepRepository::class)]
 #[ApiResource(
+    order: ['position' => 'ASC'],
     operations: [
         new GetCollection(
             normalizationContext: ['groups' => ['step:read']],
@@ -28,6 +31,10 @@ use Symfony\Component\Uid\Uuid;
             parameters: [
                 'workflow' => new QueryParameter(description: 'Filter steps by workflow'),
             ]
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['step:write']],
+            validationContext: ['groups' => [MaxStepsPerWorkflow::GROUP_CREATE]],
         ),
     ]
 )]
@@ -48,6 +55,7 @@ class Step
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[MaxStepsPerWorkflow(groups: [MaxStepsPerWorkflow::GROUP_CREATE])]
     private Workflow $workflow;
 
     /**

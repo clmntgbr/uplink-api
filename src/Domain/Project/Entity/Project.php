@@ -32,7 +32,7 @@ use Symfony\Component\Uid\Uuid;
         ),
         new Post(
             denormalizationContext: ['groups' => ['project:write']],
-            validationContext: ['groups' => ['Default', MaxProjectsPerUser::GROUP_CREATE]],
+            validationContext: ['groups' => [MaxProjectsPerUser::GROUP_CREATE]],
             processor: CreateProjectProcessor::class,
         ),
         new Patch(

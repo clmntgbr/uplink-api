@@ -1,4 +1,6 @@
 App\Domain\Workflow\Entity\Workflow:
   workflow_{1..800}:
     name: "<sentence(3, true)>"
+
     project: "@project_*"
+    description: "<sentence(10, true)>"

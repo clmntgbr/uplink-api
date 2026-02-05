@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Workflow\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Domain\Project\Entity\Project;
@@ -30,8 +31,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Post(
             denormalizationContext: ['groups' => ['workflow:write']],
-            validationContext: ['groups' => ['Default', MaxWorkflowsPerProject::GROUP_CREATE]],
+            validationContext: ['groups' => [MaxWorkflowsPerProject::GROUP_CREATE]],
             processor: CreateWorkflowProcessor::class,
+        ),
+        new Get(
+            normalizationContext: ['groups' => ['workflow:read', 'step:read']],
         ),
     ]
 )]
@@ -45,6 +49,10 @@ class Workflow
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
     private string $name;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['workflow:read', 'workflow:write'])]
+    private ?string $description = null;
 
     /**
      * @var Collection<int, Step>
@@ -77,6 +85,16 @@ class Workflow
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
     }
 
     public function getProject(): Project

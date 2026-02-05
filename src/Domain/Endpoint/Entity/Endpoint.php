@@ -110,9 +110,11 @@ class Endpoint
         return $this->method;
     }
 
-    public function setMethod(MethodEnum $method): void
+    public function setMethod(MethodEnum $method): static
     {
         $this->method = $method;
+
+        return $this;
     }
 
     /**
@@ -126,9 +128,11 @@ class Endpoint
     /**
      * @param array<string, string> $header
      */
-    public function setHeader(array $header): void
+    public function setHeader(array $header): static
     {
         $this->header = $header;
+
+        return $this;
     }
 
     public function getBaseUri(): string
@@ -136,9 +140,11 @@ class Endpoint
         return $this->baseUri;
     }
 
-    public function setBaseUri(string $baseUri): void
+    public function setBaseUri(string $baseUri): static
     {
         $this->baseUri = $baseUri;
+
+        return $this;
     }
 
     public function getPath(): string
@@ -146,9 +152,11 @@ class Endpoint
         return $this->path;
     }
 
-    public function setPath(string $path): void
+    public function setPath(string $path): static
     {
         $this->path = $path;
+
+        return $this;
     }
 
     public function isActive(): bool
@@ -156,9 +164,11 @@ class Endpoint
         return $this->isActive;
     }
 
-    public function setIsActive(bool $isActive): void
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
     }
 
     /**
@@ -172,9 +182,11 @@ class Endpoint
     /**
      * @param array<string, string> $body
      */
-    public function setBody(array $body): void
+    public function setBody(array $body): static
     {
         $this->body = $body;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -182,9 +194,11 @@ class Endpoint
         return $this->name;
     }
 
-    public function setName(?string $name): void
+    public function setName(?string $name): static
     {
         $this->name = $name;
+
+        return $this;
     }
 
     public function getTimeoutSeconds(): ?int
@@ -192,9 +206,11 @@ class Endpoint
         return $this->timeoutSeconds;
     }
 
-    public function setTimeoutSeconds(?int $timeoutSeconds): void
+    public function setTimeoutSeconds(?int $timeoutSeconds): static
     {
         $this->timeoutSeconds = $timeoutSeconds;
+
+        return $this;
     }
 
     public function getProject(): Project
@@ -202,9 +218,11 @@ class Endpoint
         return $this->project;
     }
 
-    public function setProject(Project $project): void
+    public function setProject(Project $project): static
     {
         $this->project = $project;
+
+        return $this;
     }
 
     /**
@@ -215,24 +233,34 @@ class Endpoint
         return $this->steps;
     }
 
-    public function addStep(Step $step): void
+    public function addStep(Step $step): static
     {
         if (! $this->steps->contains($step)) {
             $this->steps->add($step);
             $step->setEndpoint($this);
         }
+
+        return $this;
     }
 
-    public function removeStep(Step $step): void
+    public function removeStep(Step $step): static
     {
         $this->steps->removeElement($step);
+
+        return $this;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getQuery(): array
     {
         return $this->query;
     }
 
+    /**
+     * @param array<string, string> $query
+     */
     public function setQuery(array $query): static
     {
         $this->query = $query;
