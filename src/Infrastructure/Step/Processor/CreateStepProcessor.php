@@ -45,6 +45,7 @@ final readonly class CreateStepProcessor implements ProcessorInterface
         $workflow = $data->getWorkflow();
 
         $data->setPosition($workflow->getSteps()->count() + 1);
+
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
     }
 }
