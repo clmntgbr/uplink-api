@@ -16,6 +16,7 @@ use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
 use App\Infrastructure\Step\Processor\CreateStepProcessor;
 use App\Infrastructure\Project\Validation\Constraint\MaxStepsPerWorkflow;
+use App\Presentation\Step\Controller\UpdateStepController;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -42,6 +43,10 @@ use Symfony\Component\Uid\Uuid;
         ),
         new Patch(
             denormalizationContext: ['groups' => ['step:write']],
+        ),
+        new Patch(
+            denormalizationContext: ['groups' => ['step:write']],
+            controller: UpdateStepController::class,
         ),
     ]
 )]
