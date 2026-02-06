@@ -1,0 +1,20 @@
+ENTITÉS WORKFLOW, STEP, ENDPOINT — RÉSUMÉ
+
+Workflow
+  - Champs : id, name, description, project, steps
+  - Liens : ManyToOne → Project | OneToMany → Step
+
+Step
+  - Champs : id, position, endpoint, workflow, header (+ config)
+  - Liens : ManyToOne → Workflow | ManyToOne → Endpoint
+
+Endpoint
+  - Champs : id, name, baseUri, path, method, header, body, query, response, timeoutSeconds, project, steps
+  - Liens : ManyToOne → Project | OneToMany → Step
+
+LIENS
+  Project ──1:N──> Workflow
+  Project ──1:N──> Endpoint
+  Workflow ──1:N──> Step  <──N:1── Endpoint
+
+Step est la table de liaison : chaque step = un appel à un Endpoint à une position donnée dans un Workflow.
