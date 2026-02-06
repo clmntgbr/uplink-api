@@ -3,9 +3,6 @@ App\Domain\Step\Entity\Step:
     endpoint: "@endpoint_*"
     workflow: "@workflow_*"
     position: "<numberBetween(1, 10000)>"
-    variables:
-      name: "<firstName()>"
-      email: "<email()>"
     response:
       name: "<firstName()>"
       email: "<email()>"
@@ -13,6 +10,10 @@ App\Domain\Step\Entity\Step:
       expiresAt: "<dateTimeBetween('now', '+1 hour')>"
       refreshToken: "<uuid()>"
       refreshExpiresAt: "<dateTimeBetween('now', '+1 day')>"
-    asserts:
+    query:
+      id: "<uuid()>"
+    body:
       name: "isString"
       email: "isEmail"
+    header:
+      Content-Type: "application/json"

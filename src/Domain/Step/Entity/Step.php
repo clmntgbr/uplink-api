@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\QueryParameter;
 use App\Domain\Endpoint\Entity\Endpoint;
 use App\Domain\Step\Repository\StepRepository;
 use App\Domain\Workflow\Entity\Workflow;
+use App\Infrastructure\Step\Processor\CreateStepProcessor;
 use App\Infrastructure\Project\Validation\Constraint\MaxStepsPerWorkflow;
 use App\Shared\Domain\Trait\UuidTrait;
 use Doctrine\DBAL\Types\Types;
@@ -37,6 +38,7 @@ use Symfony\Component\Uid\Uuid;
         new Post(
             denormalizationContext: ['groups' => ['step:write']],
             validationContext: ['groups' => [MaxStepsPerWorkflow::GROUP_CREATE]],
+            processor: CreateStepProcessor::class,
         ),
         new Patch(
             denormalizationContext: ['groups' => ['step:write']],
@@ -55,34 +57,42 @@ class Step
 
     #[ORM\ManyToOne(targetEntity: Endpoint::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    #[Groups(['step:read'])]
+    #[Groups(['step:read', 'step:write'])]
     private Endpoint $endpoint;
 
     #[ORM\ManyToOne(targetEntity: Workflow::class, inversedBy: 'steps')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[MaxStepsPerWorkflow(groups: [MaxStepsPerWorkflow::GROUP_CREATE])]
+    #[Groups(['step:write'])]
     private Workflow $workflow;
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['step:read'])]
-    private array $variables = [];
+    #[Groups(['endpoint:read', 'step:write', 'step:read'])]
+    private array $header = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['step:read'])]
+    #[Groups(['endpoint:read', 'step:write', 'step:read'])]
+    private array $body = [];
+
+    /**
+     * @var array<string, string>
+     */
+    #[ORM\Column(type: Types::JSON)]
+    #[Groups(['endpoint:read', 'step:write', 'step:read'])]
     private array $response = [];
 
     /**
      * @var array<string, string>
      */
     #[ORM\Column(type: Types::JSON)]
-    #[Groups(['step:read'])]
-    private array $asserts = [];
+    #[Groups(['endpoint:read', 'step:write', 'step:read'])]
+    private array $query = [];
 
     public function __construct()
     {
@@ -93,22 +103,6 @@ class Step
     public function getId(): Uuid
     {
         return $this->id;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getVariables(): array
-    {
-        return $this->variables;
-    }
-
-    /**
-     * @param array<string, string> $variables
-     */
-    public function setVariables(array $variables): void
-    {
-        $this->variables = $variables;
     }
 
     /**
@@ -160,16 +154,54 @@ class Step
     /**
      * @return array<string, string>
      */
-    public function getAsserts(): array
+    public function getQuery(): array
     {
-        return $this->asserts;
+        return $this->query;
     }
 
     /**
-     * @param array<string, string> $asserts
+     * @param array<string, string> $query
      */
-    public function setAsserts(array $asserts): void
+    public function setQuery(array $query): static
     {
-        $this->asserts = $asserts;
+        $this->query = $query;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getBody(): array
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param array<string, string> $body
+     */
+    public function setBody(array $body): static
+    {
+        $this->body = $body;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getHeader(): array
+    {
+        return $this->header;
+    }
+
+    /**
+     * @param array<string, string> $header
+     */
+    public function setHeader(array $header): static
+    {
+        $this->header = $header;
+
+        return $this;
     }
 }

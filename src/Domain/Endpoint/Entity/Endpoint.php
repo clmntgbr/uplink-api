@@ -83,9 +83,6 @@ class Endpoint
     #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private array $query = [];
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private bool $isActive = false;
-
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private ?int $timeoutSeconds = null;
@@ -162,18 +159,6 @@ class Endpoint
     public function setPath(string $path): static
     {
         $this->path = $path;
-
-        return $this;
-    }
-
-    public function isActive(): bool
-    {
-        return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): static
-    {
-        $this->isActive = $isActive;
 
         return $this;
     }
