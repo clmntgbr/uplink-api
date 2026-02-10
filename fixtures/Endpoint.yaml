@@ -12,11 +12,4 @@ App\Domain\Endpoint\Entity\Endpoint:
       email: "<email()>"
     query:
       id: "<uuid()>"
-    response:
-      name: "<firstName()>"
-      email: "<email()>"
-      token: "<uuid()>"
-      expiresAt: "<dateTimeBetween('now', '+1 hour')>"
-      refreshToken: "<uuid()>"
-      refreshExpiresAt: "<dateTimeBetween('now', '+1 day')>"
     timeoutSeconds: "<numberBetween(1, 30)>"

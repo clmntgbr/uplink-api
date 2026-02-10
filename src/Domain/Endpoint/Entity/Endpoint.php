@@ -74,13 +74,6 @@ class Endpoint
      */
     #[ORM\Column(type: Types::JSON)]
     #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
-    private array $response = [];
-
-    /**
-     * @var array<string, string>
-     */
-    #[ORM\Column(type: Types::JSON)]
-    #[Groups(['endpoint:read', 'endpoint:write', 'step:read'])]
     private array $query = [];
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
@@ -256,24 +249,6 @@ class Endpoint
     public function setQuery(array $query): static
     {
         $this->query = $query;
-
-        return $this;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getResponse(): array
-    {
-        return $this->response;
-    }
-
-    /**
-     * @param array<string, string> $response
-     */
-    public function setResponse(array $response): static
-    {
-        $this->response = $response;
 
         return $this;
     }
