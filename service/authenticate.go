@@ -34,7 +34,7 @@ func NewAuthenticateService(userRepo *repository.UserRepository, projectRepo *re
 	}
 }
 
-func (s *AuthenticateService) Login(loginInput *dto.LoginInput) (*dto.LoginOutput, error) {
+func (s *AuthenticateService) Login(loginInput dto.LoginInput) (*dto.LoginOutput, error) {
 	user, err := s.userRepo.FindByEmail(loginInput.Email)
 	if err != nil {
 		return nil, errors.New("invalid credentials")
@@ -55,7 +55,7 @@ func (s *AuthenticateService) Login(loginInput *dto.LoginInput) (*dto.LoginOutpu
 	}, nil
 }
 
-func (s *AuthenticateService) Register(ctx context.Context, registerInput *dto.RegisterInput) (*dto.RegisterOutput, error) {
+func (s *AuthenticateService) Register(ctx context.Context, registerInput dto.RegisterInput) (*dto.RegisterOutput, error) {
 	existingUser, _ := s.userRepo.FindByEmail(registerInput.Email)
 	if existingUser != nil {
 		return nil, errors.New("email already exists")
