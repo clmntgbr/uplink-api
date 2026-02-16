@@ -38,8 +38,13 @@ CMD ["air", "-c", ".air.toml"]
 # ============================================
 FROM base AS builder
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -o main server.go
+# Build the application from cmd/server
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -a -installsuffix cgo \
+    -ldflags="-w -s" \
+    -o main \
+    ./cmd/server  
+# ← Changé ici
 
 
 # ============================================
