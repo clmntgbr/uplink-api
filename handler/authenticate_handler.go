@@ -12,7 +12,7 @@ type AuthenticateHandler struct {
 	authenticateService *service.AuthenticateService
 }
 
-func NewAuthHandler(authService *service.AuthenticateService) *AuthenticateHandler {
+func NewAuthenticateHandler(authService *service.AuthenticateService) *AuthenticateHandler {
 	return &AuthenticateHandler{
 		authenticateService: authService,
 	}
@@ -20,7 +20,7 @@ func NewAuthHandler(authService *service.AuthenticateService) *AuthenticateHandl
 
 func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 	var req dto.LoginInput
-	
+
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",
@@ -46,7 +46,7 @@ func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 
 func (h *AuthenticateHandler) Register(c fiber.Ctx) error {
 	var req dto.RegisterInput
-	
+
 	if err := c.Bind().JSON(&req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request body",

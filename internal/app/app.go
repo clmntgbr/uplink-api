@@ -3,6 +3,8 @@ package app
 import (
 	"uplink-api/config"
 	"uplink-api/internal/router"
+	"uplink-api/repository"
+	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
 	"gorm.io/gorm"
@@ -17,9 +19,18 @@ func New(cfg *config.Config) *App {
 	db := config.ConnectDatabase(cfg)
 	config.AutoMigrate(db)
 
+	userRepo := repository.NewUserRepository(db)
+	projectRepo := repository.NewProjectRepository(db)
+
+	authenticateService := service.NewAuthenticateService(userRepo, projectRepo, cfg)
+
 	app := fiber.New()
 
-	router.Setup(app)
+	router.Setup(app, router.Dependencies{
+		AuthenticateService: authenticateService,
+		UserRepo:            userRepo,
+		ProjectRepo:         projectRepo,
+	})
 
 	return &App{
 		fiber: app,
