@@ -26,6 +26,9 @@ FROM base AS development
 # Install Air for hot reload
 RUN go install github.com/air-verse/air@latest
 
+RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+ENV PATH="/go/bin:${PATH}"
+
 # Expose port
 EXPOSE 3000
 
