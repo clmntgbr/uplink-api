@@ -15,7 +15,7 @@ import (
 type Dependencies struct {
 	AuthenticateService *service.AuthenticateService
 	UserRepo            *repository.UserRepository
-	ProjectRepo         *repository.ProjectRepository
+	UserService         *service.UserService
 }
 
 func Setup(app *fiber.App, deps Dependencies) {
@@ -36,18 +36,15 @@ func setupHealthChecks(app *fiber.App) {
 
 func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api := app.Group("/api")
+	
 	authenticateMiddleware := middleware.NewAuthenticateMiddleware(deps.AuthenticateService, deps.UserRepo)
-
 	authenticateHandler := handler.NewAuthenticateHandler(deps.AuthenticateService)
+	userHandler := handler.NewUserHandler(deps.UserService)
 
 	api.Post("/login", authenticateHandler.Login)
 	api.Post("/register", authenticateHandler.Register)
 
 	api.Use(authenticateMiddleware.Protected())
 
-	api.Get("/user", func(c fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"message": "Hello, World!",
-		})
-	})
+	api.Get("/user", userHandler.GetUser)
 }

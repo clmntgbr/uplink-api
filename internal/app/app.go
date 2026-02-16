@@ -23,13 +23,14 @@ func New(cfg *config.Config) *App {
 	projectRepo := repository.NewProjectRepository(db)
 
 	authenticateService := service.NewAuthenticateService(userRepo, projectRepo, cfg)
+	userService := service.NewUserService(userRepo, cfg)
 
 	app := fiber.New()
 
 	router.Setup(app, router.Dependencies{
 		AuthenticateService: authenticateService,
 		UserRepo:            userRepo,
-		ProjectRepo:         projectRepo,
+		UserService:         userService,
 	})
 
 	return &App{
