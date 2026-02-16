@@ -51,7 +51,7 @@ func (s *AuthenticateService) Login(loginInput dto.LoginInput) (*dto.LoginOutput
 
 	return &dto.LoginOutput{
 		Token: token,
-		User:  *user,
+		User:  dto.NewUserOutput(*user),
 	}, nil
 }
 
@@ -95,7 +95,7 @@ func (s *AuthenticateService) Register(ctx context.Context, registerInput dto.Re
 
 	return &dto.RegisterOutput{
 		Token: token,
-		User:  *user,
+		User:  dto.NewUserOutput(*user),
 	}, nil
 }
 

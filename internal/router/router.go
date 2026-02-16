@@ -38,10 +38,10 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api := app.Group("/api")
 	authenticateMiddleware := middleware.NewAuthenticateMiddleware(deps.AuthenticateService, deps.UserRepo)
 
-	authHandler := handler.NewAuthenticateHandler(deps.AuthenticateService)
+	authenticateHandler := handler.NewAuthenticateHandler(deps.AuthenticateService)
 
-	api.Post("/login", authHandler.Login)
-	api.Post("/register", authHandler.Register)
+	api.Post("/login", authenticateHandler.Login)
+	api.Post("/register", authenticateHandler.Register)
 
 	api.Use(authenticateMiddleware.Protected())
 

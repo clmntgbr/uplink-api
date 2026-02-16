@@ -1,7 +1,5 @@
 package dto
 
-import "uplink-api/domain"
-
 type LoginInput struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6"`
@@ -16,10 +14,10 @@ type RegisterInput struct {
 
 type LoginOutput struct {
 	Token string `json:"token"`
-	User  domain.User   `json:"user"`
+	User  UserOutput   `json:"user"`
 }
 
 type RegisterOutput struct {
 	Token string `json:"token"`
-	User  domain.User   `json:"user"`
+	User  UserOutput   `json:"user"`
 }
