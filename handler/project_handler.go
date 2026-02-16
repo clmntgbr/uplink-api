@@ -25,7 +25,7 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 		})
 	}
 
-	projects, err := h.projectService.GetProjects(userID)
+	projects, err := h.projectService.GetProjects(c.Context(), userID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),

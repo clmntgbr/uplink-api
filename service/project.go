@@ -22,10 +22,10 @@ func NewProjectService(projectRepo *repository.ProjectRepository, cfg *config.Co
 	}
 }
 
-func (s *ProjectService) GetProjects(userID uuid.UUID) ([]dto.ProjectOutput, error) {
-	projects, err := s.projectRepo.FindAllByUserID(context.Background(), userID)
+func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID) ([]dto.ProjectOutput, error) {
+	projects, err := s.projectRepo.FindAllByUserID(ctx, userID)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return nil, errors.New("projects not found")
 	}
 
 	output := dto.NewProjectsOutput(projects)
