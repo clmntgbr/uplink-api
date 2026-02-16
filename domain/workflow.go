@@ -7,11 +7,11 @@ import (
 )
 
 type Workflow struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
-	Name string    `gorm:"not null" json:"name"`
+	ID          uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	Name        string    `gorm:"not null" json:"name"`
 	Description string    `gorm:"not null" json:"description"`
 
-	Steps []Step `gorm:"foreignKey:WorkflowID" json:"steps"`
+	Steps     []Step    `gorm:"foreignKey:WorkflowID" json:"steps"`
 	ProjectID uuid.UUID `gorm:"type:uuid;not null" json:"project_id"`
 
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`

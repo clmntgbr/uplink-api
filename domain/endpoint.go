@@ -3,17 +3,17 @@ package domain
 import (
 	"time"
 
-	"gorm.io/datatypes"
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 )
 
 type Endpoint struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"id"`
-	Name string    `gorm:"not null" json:"name"`
+	ID      uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	Name    string    `gorm:"not null" json:"name"`
 	BaseUri string    `gorm:"not null" json:"baseUri"`
-	Path string    `gorm:"not null" json:"path"`
-	Method string    `gorm:"not null" json:"method"`
-	Timeout int `gorm:"not null" json:"timeout"`
+	Path    string    `gorm:"not null" json:"path"`
+	Method  string    `gorm:"not null" json:"method"`
+	Timeout int       `gorm:"not null" json:"timeout"`
 
 	Header datatypes.JSON `json:"header" gorm:"type:json"`
 	Body   datatypes.JSON `json:"body" gorm:"type:json"`
