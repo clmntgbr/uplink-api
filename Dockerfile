@@ -43,8 +43,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     -a -installsuffix cgo \
     -ldflags="-w -s" \
     -o main \
-    ./server.go 
-# ← Changé ici
+    ./cmd/server/main.go
 
 
 # ============================================
