@@ -2,6 +2,7 @@ package router
 
 import (
 	"uplink-api/handler"
+	"uplink-api/middleware"
 	"uplink-api/repository"
 	"uplink-api/service"
 
@@ -35,9 +36,18 @@ func setupHealthChecks(app *fiber.App) {
 
 func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api := app.Group("/api")
+	authenticateMiddleware := middleware.NewAuthenticateMiddleware(deps.AuthenticateService, deps.UserRepo)
 
 	authHandler := handler.NewAuthenticateHandler(deps.AuthenticateService)
 
 	api.Post("/login", authHandler.Login)
 	api.Post("/register", authHandler.Register)
+
+	api.Use(authenticateMiddleware.Protected())
+
+	api.Get("/user", func(c fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "Hello, World!",
+		})
+	})
 }
