@@ -5,6 +5,7 @@ import (
 
 	"uplink-api/domain"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -20,4 +21,19 @@ func (r *ProjectRepository) Create(ctx context.Context, project *domain.Project)
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		return tx.Create(project).Error
 	})
+}
+
+func (r *ProjectRepository) FindAllByUserID(ctx context.Context, userID uuid.UUID) ([]domain.Project, error) {
+	var projects []domain.Project
+
+	err := r.db.WithContext(ctx).
+		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
+		Where("user_projects.user_id = ?", userID).
+		Find(&projects).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return projects, nil
 }

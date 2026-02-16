@@ -24,6 +24,7 @@ func New(cfg *config.Config) *App {
 
 	authenticateService := service.NewAuthenticateService(userRepo, projectRepo, cfg)
 	userService := service.NewUserService(userRepo, cfg)
+	projectService := service.NewProjectService(projectRepo, cfg)
 
 	app := fiber.New()
 
@@ -31,6 +32,7 @@ func New(cfg *config.Config) *App {
 		AuthenticateService: authenticateService,
 		UserRepo:            userRepo,
 		UserService:         userService,
+		ProjectService:      projectService,
 	})
 
 	return &App{

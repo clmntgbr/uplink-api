@@ -16,6 +16,7 @@ type Dependencies struct {
 	AuthenticateService *service.AuthenticateService
 	UserRepo            *repository.UserRepository
 	UserService         *service.UserService
+	ProjectService      *service.ProjectService
 }
 
 func Setup(app *fiber.App, deps Dependencies) {
@@ -36,10 +37,12 @@ func setupHealthChecks(app *fiber.App) {
 
 func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api := app.Group("/api")
-	
+
 	authenticateMiddleware := middleware.NewAuthenticateMiddleware(deps.AuthenticateService, deps.UserRepo)
+
 	authenticateHandler := handler.NewAuthenticateHandler(deps.AuthenticateService)
 	userHandler := handler.NewUserHandler(deps.UserService)
+	projectHandler := handler.NewProjectHandler(deps.ProjectService)
 
 	api.Post("/login", authenticateHandler.Login)
 	api.Post("/register", authenticateHandler.Register)
@@ -47,4 +50,6 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api.Use(authenticateMiddleware.Protected())
 
 	api.Get("/user", userHandler.GetUser)
+
+	api.Get("/projects", projectHandler.GetProjects)
 }
