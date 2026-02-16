@@ -13,11 +13,11 @@ type RegisterInput struct {
 }
 
 type LoginOutput struct {
-	Token string `json:"token"`
-	User  UserOutput   `json:"user"`
+	Token string     `json:"token"`
+	User  UserOutput `json:"user"`
 }
 
 type RegisterOutput struct {
-	Token string `json:"token"`
-	User  UserOutput   `json:"user"`
+	Token string     `json:"token"`
+	User  UserOutput `json:"user"`
 }

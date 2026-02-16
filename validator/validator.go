@@ -16,7 +16,7 @@ func ValidateStruct(s interface{}) error {
 
 func formatValidationErrors(err error) map[string]string {
 	errors := make(map[string]string)
-	
+
 	if validationErrors, ok := err.(validator.ValidationErrors); ok {
 		for _, e := range validationErrors {
 			field := e.Field()
@@ -34,7 +34,7 @@ func formatValidationErrors(err error) map[string]string {
 			}
 		}
 	}
-	
+
 	return errors
 }
 

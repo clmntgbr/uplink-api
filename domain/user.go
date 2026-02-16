@@ -14,7 +14,7 @@ type User struct {
 	LastName  string    `json:"last_name"`
 	Avatar    string    `json:"avatar"`
 
-	Projects        []Project  `gorm:"many2many:user_projects" json:"projects,omitempty"`
+	Projects        []Project `gorm:"many2many:user_projects" json:"projects,omitempty"`
 	ActiveProjectID uuid.UUID `gorm:"type:uuid" json:"active_project_id"`
 
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`

@@ -9,15 +9,15 @@ import (
 )
 
 type Config struct {
-	DatabaseURL string
-	Port        string
-	Environment string
+	DatabaseURL   string
+	Port          string
+	Environment   string
 	JWTSecret     string
 	JWTExpiration time.Duration
 }
 
 func Load() *Config {
-	if error := godotenv.Load(); error != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Println("no .env file found, cp .env.dist first.")
 	}
 

@@ -52,5 +52,5 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api.Get("/user", userHandler.GetUser)
 
 	api.Get("/projects", projectHandler.GetProjects)
-	api.Get("/projects/:id", projectHandler.GetProjectById)
+	api.Get("/projects/:id", projectHandler.GetProjectByID)
 }

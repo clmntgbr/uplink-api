@@ -26,4 +26,3 @@ func GetUserID(c fiber.Ctx) (uuid.UUID, error) {
 	}
 	return userID, nil
 }
-

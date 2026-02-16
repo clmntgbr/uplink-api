@@ -36,7 +36,7 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 	return c.JSON(projects)
 }
 
-func (h *ProjectHandler) GetProjectById(c fiber.Ctx) error {
+func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -58,7 +58,7 @@ func (h *ProjectHandler) GetProjectById(c fiber.Ctx) error {
 		})
 	}
 
-	project, err := h.projectService.GetProjectById(c.Context(), userID, projectUUID)
+	project, err := h.projectService.GetProjectByID(c.Context(), userID, projectUUID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),

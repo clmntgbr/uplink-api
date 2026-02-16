@@ -10,7 +10,7 @@ import (
 type Endpoint struct {
 	ID      uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	Name    string    `gorm:"not null" json:"name"`
-	BaseUri string    `gorm:"not null" json:"baseUri"`
+	BaseURI string    `gorm:"not null" json:"baseUri"`
 	Path    string    `gorm:"not null" json:"path"`
 	Method  string    `gorm:"not null" json:"method"`
 	Timeout int       `gorm:"not null" json:"timeout"`

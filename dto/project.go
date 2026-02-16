@@ -8,7 +8,7 @@ import (
 
 type ProjectOutput struct {
 	ID       string `json:"id"`
-	Name    string `json:"name"`
+	Name     string `json:"name"`
 	IsActive bool   `json:"isActive"`
 }
 
@@ -17,7 +17,7 @@ func NewProjectOutput(project domain.Project, activeProjectID uuid.UUID) Project
 	if activeProjectID != uuid.Nil && activeProjectID == project.ID {
 		isActive = true
 	}
-	
+
 	return ProjectOutput{
 		ID:       project.ID.String(),
 		Name:     project.Name,
@@ -32,4 +32,3 @@ func NewProjectsOutput(projects []domain.Project, activeProjectID uuid.UUID) []P
 	}
 	return outputs
 }
-
