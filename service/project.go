@@ -31,3 +31,14 @@ func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID) ([]d
 	output := dto.NewProjectsOutput(projects)
 	return output, nil
 }
+
+func (s *ProjectService) GetProjectById(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (dto.ProjectOutput, error) {
+	project, err := s.projectRepo.FindByID(ctx, projectID, userID)
+	if err != nil {
+		return dto.ProjectOutput{}, errors.New("project not found")
+	}
+
+	output := dto.NewProjectOutput(*project)
+	return output, nil
+}
+
