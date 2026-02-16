@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"uplink-api/config"
 	"uplink-api/dto"
 	"uplink-api/repository"
 
@@ -12,33 +11,42 @@ import (
 
 type ProjectService struct {
 	projectRepo *repository.ProjectRepository
-	config      *config.Config
+	userRepo    *repository.UserRepository
 }
 
-func NewProjectService(projectRepo *repository.ProjectRepository, cfg *config.Config) *ProjectService {
+func NewProjectService(projectRepo *repository.ProjectRepository, userRepo *repository.UserRepository) *ProjectService {
 	return &ProjectService{
 		projectRepo: projectRepo,
-		config:      cfg,
+		userRepo:    userRepo,
 	}
 }
 
 func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID) ([]dto.ProjectOutput, error) {
-	projects, err := s.projectRepo.FindAllByUserID(ctx, userID)
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	projects, err := s.projectRepo.FindAllByUserID(ctx, user)
 	if err != nil {
 		return nil, errors.New("projects not found")
 	}
 
-	output := dto.NewProjectsOutput(projects)
+	output := dto.NewProjectsOutput(projects, user.ActiveProjectID)
 	return output, nil
 }
 
 func (s *ProjectService) GetProjectById(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (dto.ProjectOutput, error) {
-	project, err := s.projectRepo.FindByID(ctx, projectID, userID)
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return 	dto.ProjectOutput{}, errors.New("user not found")
+	}
+
+	project, err := s.projectRepo.FindByID(ctx, projectID, user)
 	if err != nil {
 		return dto.ProjectOutput{}, errors.New("project not found")
 	}
 
-	output := dto.NewProjectOutput(*project)
+	output := dto.NewProjectOutput(*project, user.ActiveProjectID)
 	return output, nil
 }
-

@@ -23,8 +23,8 @@ func New(cfg *config.Config) *App {
 	projectRepo := repository.NewProjectRepository(db)
 
 	authenticateService := service.NewAuthenticateService(userRepo, projectRepo, cfg)
-	userService := service.NewUserService(userRepo, cfg)
-	projectService := service.NewProjectService(projectRepo, cfg)
+	userService := service.NewUserService(userRepo)
+	projectService := service.NewProjectService(projectRepo, userRepo)
 
 	app := fiber.New()
 

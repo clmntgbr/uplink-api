@@ -23,12 +23,12 @@ func (r *ProjectRepository) Create(ctx context.Context, project *domain.Project)
 	})
 }
 
-func (r *ProjectRepository) FindAllByUserID(ctx context.Context, userID uuid.UUID) ([]domain.Project, error) {
+func (r *ProjectRepository) FindAllByUserID(ctx context.Context, user *domain.User) ([]domain.Project, error) {
 	var projects []domain.Project
 
 	err := r.db.WithContext(ctx).
 		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
-		Where("user_projects.user_id = ?", userID).
+		Where("user_projects.user_id = ?", user.ID).
 		Find(&projects).Error
 
 	if err != nil {
@@ -38,12 +38,12 @@ func (r *ProjectRepository) FindAllByUserID(ctx context.Context, userID uuid.UUI
 	return projects, nil
 }
 
-func (r *ProjectRepository) FindByID(ctx context.Context, projectID uuid.UUID, userID uuid.UUID) (*domain.Project, error) {
+func (r *ProjectRepository) FindByID(ctx context.Context, projectID uuid.UUID, user *domain.User) (*domain.Project, error) {
 	var project domain.Project
 
 	err := r.db.WithContext(ctx).
 		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
-		Where("projects.id = ? AND user_projects.user_id = ?", projectID, userID).
+		Where("projects.id = ? AND user_projects.user_id = ?", projectID, user.ID).
 		First(&project).Error
 
 	if err != nil {
