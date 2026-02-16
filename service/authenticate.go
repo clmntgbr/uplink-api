@@ -1,12 +1,13 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"time"
 	"uplink-api/config"
 	"uplink-api/domain"
-	"uplink-api/repository"
 	"uplink-api/dto"
+	"uplink-api/repository"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -27,9 +28,9 @@ type JWTClaims struct {
 
 func NewAuthenticateService(userRepo *repository.UserRepository, projectRepo *repository.ProjectRepository, cfg *config.Config) *AuthenticateService {
 	return &AuthenticateService{
-		userRepo: userRepo,
+		userRepo:    userRepo,
 		projectRepo: projectRepo,
-		config:   cfg,
+		config:      cfg,
 	}
 }
 
@@ -42,6 +43,7 @@ func (s *AuthenticateService) Login(loginInput *dto.LoginInput) (*dto.LoginOutpu
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginInput.Password)); err != nil {
 		return nil, errors.New("invalid credentials")
 	}
+
 	token, err := s.GenerateToken(user)
 	if err != nil {
 		return nil, err
@@ -53,6 +55,49 @@ func (s *AuthenticateService) Login(loginInput *dto.LoginInput) (*dto.LoginOutpu
 	}, nil
 }
 
+func (s *AuthenticateService) Register(ctx context.Context, registerInput *dto.RegisterInput) (*dto.RegisterOutput, error) {
+	existingUser, _ := s.userRepo.FindByEmail(registerInput.Email)
+	if existingUser != nil {
+		return nil, errors.New("email already exists")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registerInput.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, err
+	}
+
+	project := &domain.Project{
+		Name: "Default Project",
+	}
+
+	if err := s.projectRepo.Create(ctx, project); err != nil {
+		return nil, err
+	}
+
+	user := &domain.User{
+		Email:           registerInput.Email,
+		Password:        string(hashedPassword),
+		FirstName:       registerInput.FirstName,
+		LastName:        registerInput.LastName,
+		Avatar:          "https://avatar-placeholder.iran.liara.run/avatars/male",
+		Projects:        []domain.Project{*project},
+		ActiveProjectID: project.ID,
+	}
+
+	if err := s.userRepo.Create(user); err != nil {
+		return nil, err
+	}
+
+	token, err := s.GenerateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.RegisterOutput{
+		Token: token,
+		User:  *user,
+	}, nil
+}
 
 func (s *AuthenticateService) GenerateToken(user *domain.User) (string, error) {
 	claims := JWTClaims{

@@ -18,6 +18,6 @@ func NewProjectRepository(db *gorm.DB) *ProjectRepository {
 
 func (r *ProjectRepository) Create(ctx context.Context, project *domain.Project) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return nil
+		return tx.Create(project).Error
 	})
 }
