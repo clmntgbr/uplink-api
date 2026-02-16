@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"uplink-api/middleware"
+	"uplink-api/ctxutil"
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
@@ -18,7 +18,7 @@ func NewUserHandler(userService *service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) GetUser(c fiber.Ctx) error {
-	userID, err := middleware.GetUserID(c)
+	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",

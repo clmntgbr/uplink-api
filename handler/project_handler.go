@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"uplink-api/middleware"
+	"uplink-api/ctxutil"
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
@@ -19,7 +19,7 @@ func NewProjectHandler(projectService *service.ProjectService) *ProjectHandler {
 }
 
 func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
-	userID, err := middleware.GetUserID(c)
+	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",
@@ -37,7 +37,7 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 }
 
 func (h *ProjectHandler) GetProjectById(c fiber.Ctx) error {
-	userID, err := middleware.GetUserID(c)
+	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",

@@ -88,32 +88,17 @@ func (m *AuthenticateMiddleware) Protected() fiber.Handler {
 			})
 		}
 
-		_, err = m.userRepo.FindByID(claims.UserID)
+		user, err := m.userRepo.FindByID(claims.UserID)
 		if err != nil {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"message": "User not found",
 			})
 		}
 
-		c.Locals(ctxutil.UserIDKey, claims.UserID)
-		c.Locals("user_email", claims.Email)
+		c.Locals(ctxutil.UserIDKey, user.ID)
+		c.Locals(ctxutil.UserEmailKey, user.Email)
+		c.Locals(ctxutil.ActiveProjectIDKey, user.ActiveProjectID)
 
 		return c.Next()
 	}
-}
-
-func GetUserID(c fiber.Ctx) (uuid.UUID, error) {
-	userID, ok := c.Locals(ctxutil.UserIDKey).(uuid.UUID)
-	if !ok {
-		return uuid.Nil, fiber.NewError(fiber.StatusUnauthorized, "User not authenticated")
-	}
-	return userID, nil
-}
-
-func GetUserEmail(c fiber.Ctx) (string, error) {
-	email, ok := c.Locals("user_email").(string)
-	if !ok {
-		return "", fiber.NewError(fiber.StatusUnauthorized, "User not authenticated")
-	}
-	return email, nil
 }

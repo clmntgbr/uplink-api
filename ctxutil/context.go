@@ -1,30 +1,29 @@
 package ctxutil
 
 import (
-	"context"
-
+	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
 )
 
 const (
 	ActiveProjectIDKey = "activeProjectID"
 	UserIDKey          = "userID"
+	UserEmailKey       = "userEmail"
 )
 
-func WithActiveProjectID(ctx context.Context, activeProjectID *uuid.UUID) context.Context {
-	return context.WithValue(ctx, ActiveProjectIDKey, activeProjectID)
+func GetActiveProjectID(c fiber.Ctx) (uuid.UUID, error) {
+	activeProjectID, ok := c.Locals(ActiveProjectIDKey).(uuid.UUID)
+	if !ok {
+		return uuid.Nil, fiber.NewError(fiber.StatusUnauthorized, "Active project not found")
+	}
+	return activeProjectID, nil
 }
 
-func GetActiveProjectID(ctx context.Context) (*uuid.UUID, bool) {
-	activeProjectID, ok := ctx.Value(ActiveProjectIDKey).(*uuid.UUID)
-	return activeProjectID, ok
+func GetUserID(c fiber.Ctx) (uuid.UUID, error) {
+	userID, ok := c.Locals(UserIDKey).(uuid.UUID)
+	if !ok {
+		return uuid.Nil, fiber.NewError(fiber.StatusUnauthorized, "User not authenticated")
+	}
+	return userID, nil
 }
 
-func WithUserID(ctx context.Context, userID uuid.UUID) context.Context {
-	return context.WithValue(ctx, UserIDKey, userID)
-}
-
-func GetUserIDFromContext(ctx context.Context) (uuid.UUID, bool) {
-	userID, ok := ctx.Value(UserIDKey).(uuid.UUID)
-	return userID, ok
-}
