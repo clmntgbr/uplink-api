@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"uplink-api/domain"
+	"uplink-api/dto"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -23,16 +24,40 @@ func (r *EndpointRepository) Create(ctx context.Context, endpoint *domain.Endpoi
 	})
 }
 
-func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID uuid.UUID) ([]domain.Endpoint, error) {
+func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID uuid.UUID, q dto.PaginateQuery) ([]domain.Endpoint, int64, error) {
 	var endpoints []domain.Endpoint
+	var total int64
 
-	err := r.db.WithContext(ctx).
-		Where("endpoints.project_id = ?", projectID).
+	db := r.db.WithContext(ctx).Model(&domain.Endpoint{}).
+		Where("project_id = ?", projectID)
+
+	if q.Search != "" {
+		db = db.Where("name ILIKE ?", "%"+q.Search+"%")
+	}
+
+	if err := db.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	sortBy := "created_at"
+	if q.SortBy != "" {
+		sortBy = q.SortBy
+	}
+
+	orderBy := "desc"
+	if q.OrderBy == "asc" {
+		orderBy = "asc"
+	}
+
+	err := db.
+		Order(sortBy + " " + orderBy).
+		Limit(q.Limit).
+		Offset(q.Offset()).
 		Find(&endpoints).Error
 
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return endpoints, nil
+	return endpoints, total, nil
 }

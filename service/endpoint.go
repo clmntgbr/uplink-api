@@ -49,17 +49,16 @@ func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUI
 	return dto.NewEndpointOutput(*endpoint), nil
 }
 
-func (s *EndpointService) GetEndpoints(ctx context.Context, projectID uuid.UUID) ([]dto.EndpointOutput, error) {
+func (s *EndpointService) GetEndpoints(ctx context.Context, projectID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
 	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
-		return nil, errors.New("project not found")
+		return dto.PaginateResponse{}, errors.New("project not found")
 	}
 
-	endpoints, err := s.endpointRepo.FindAllByProjectID(ctx, project.ID)
+	endpoints, total, err := s.endpointRepo.FindAllByProjectID(ctx, project.ID, query)
 	if err != nil {
-		return nil, errors.New("endpoints not found")
+		return dto.PaginateResponse{}, errors.New("endpoints not found")
 	}
 
-	output := dto.NewEndpointsOutput(endpoints)
-	return output, nil
+	return dto.NewPaginateResponse(endpoints, int(total), query), nil
 }

@@ -25,7 +25,7 @@ func bindAndValidate(c fiber.Ctx, req interface{}) error {
 
 func sendUnauthorized(c fiber.Ctx) error {
 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-		"error": "Unauthorized",
+		"message": "Unauthorized",
 	})
 }
 

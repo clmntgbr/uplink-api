@@ -43,7 +43,14 @@ func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID)
+	var query dto.PaginateQuery
+	if err := c.Bind().Query(&query); err != nil {
+		return sendBadRequest(c, "invalid query params")
+	}
+
+	query.Normalize()
+
+	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID, query)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
