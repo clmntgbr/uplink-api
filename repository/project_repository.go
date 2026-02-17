@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"uplink-api/domain"
 
@@ -51,3 +52,24 @@ func (r *ProjectRepository) FindByID(ctx context.Context, projectID uuid.UUID, u
 	}
 	return &project, nil
 }
+
+func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) error {
+	var project domain.Project
+	err := r.db.WithContext(ctx).
+		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
+		Where("projects.id = ? AND user_projects.user_id = ?", projectID, userID).
+		First(&project).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errors.New("project not found or access denied")
+		}
+		return err
+	}
+
+	return r.db.WithContext(ctx).
+		Model(&domain.User{}).
+		Where("id = ?", userID).
+		Update("active_project_id", projectID).Error
+}
+

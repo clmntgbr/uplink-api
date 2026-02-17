@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
 	"uplink-api/service"
@@ -101,4 +102,49 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 	}
 
 	return c.JSON(project)
+}
+
+func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
+	userID, err := ctxutil.GetUserID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	var req dto.ActivateProjectInput
+
+	if err := c.Bind().JSON(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request body",
+		})
+	}
+
+	if err := validator.ValidateStruct(&req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Validation failed",
+			"errors":  validator.FormatValidationErrors(err),
+		})
+	}
+
+	log.Println("User ID: ", userID)
+	log.Println("Project ID: ", req.ProjectID)
+
+	projectUUID, err := uuid.Parse(req.ProjectID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid project ID format",
+		})
+	}
+
+	activated, err := h.projectService.ActivateProject(c.Context(), userID, projectUUID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"activated": activated,
+	})
 }

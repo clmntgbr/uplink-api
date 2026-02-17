@@ -13,7 +13,11 @@ type ProjectOutput struct {
 }
 
 type CreateProjectInput struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required"`
+}
+
+type ActivateProjectInput struct {
+	ProjectID string `json:"projectId" validate:"required"`
 }
 
 func NewProjectOutput(project domain.Project, activeProjectID uuid.UUID) ProjectOutput {
