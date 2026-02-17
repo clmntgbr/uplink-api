@@ -60,12 +60,12 @@ func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 		})
 	}
 
-	projects, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID)
+	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
 
-	return c.JSON(projects)
+	return c.JSON(endpoints)
 }

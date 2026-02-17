@@ -2,29 +2,31 @@ package dto
 
 import (
 	"uplink-api/domain"
+
+	"gorm.io/datatypes"
 )
 
 type EndpointOutput struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	BaseURI string `json:"baseUri"`
-	Path    string `json:"path"`
-	Method  string `json:"method"`
-	Timeout int    `json:"timeout"`
-	Header  map[string]any `json:"header"`
-	Body    map[string]any `json:"body"`
-	Query   map[string]any `json:"query"`
+	ID      string         `json:"id"`
+	Name    string         `json:"name"`
+	BaseURI string         `json:"baseUri"`
+	Path    string         `json:"path"`
+	Method  string         `json:"method"`
+	Timeout int            `json:"timeout"`
+	Header  datatypes.JSON `json:"header"`
+	Body    datatypes.JSON `json:"body"`
+	Query   datatypes.JSON `json:"query"`
 }
 
 type CreateEndpointInput struct {
-	Name    string `json:"name" validate:"required"`
-	BaseURI string `json:"baseUri" validate:"required"`
-	Path    string `json:"path" validate:"required"`
-	Method  string `json:"method" validate:"required"`
-	Timeout int    `json:"timeout" validate:"required"`
-	Header  map[string]any `json:"header" validate:"required"`
-	Body    map[string]any `json:"body" validate:"required"`
-	Query   map[string]any `json:"query" validate:"required"`
+	Name    string         `json:"name" validate:"required"`
+	BaseURI string         `json:"baseUri" validate:"required"`
+	Path    string         `json:"path" validate:"required"`
+	Method  string         `json:"method" validate:"required"`
+	Timeout int            `json:"timeout" validate:"required"`
+	Header  datatypes.JSON `json:"header" validate:"required"`
+	Body    datatypes.JSON `json:"body" validate:"required"`
+	Query   datatypes.JSON `json:"query" validate:"required"`
 }
 
 func NewEndpointOutput(endpoint domain.Endpoint) EndpointOutput {

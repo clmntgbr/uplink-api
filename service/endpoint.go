@@ -37,6 +37,9 @@ func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUI
 		Path:      req.Path,
 		Method:    req.Method,
 		Timeout:   req.Timeout,
+		Header:    req.Header,
+		Body:      req.Body,
+		Query:     req.Query,
 	}
 
 	if err := s.endpointRepo.Create(ctx, endpoint); err != nil {
