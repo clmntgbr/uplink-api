@@ -9,16 +9,16 @@ import (
 )
 
 type ProjectRules struct {
-	userRepo *repository.UserRepository
+	projectRepo *repository.ProjectRepository
 }
 
-func NewProjectRules(userRepo *repository.UserRepository) *ProjectRules {
+func NewProjectRules(projectRepo *repository.ProjectRepository) *ProjectRules {
 	return &ProjectRules{
-		userRepo: userRepo,
+		projectRepo: projectRepo,
 	}
 }
 func (p *ProjectRules) MaxProjectsPerUser(ctx context.Context, userID uuid.UUID) error {
-	count, err := p.userRepo.CountProjectsByUserID(ctx, userID)
+	count, err := p.projectRepo.CountProjectsByUserID(ctx, userID)
 	if err != nil {
 		return domain.ErrUserNotFound
 	}

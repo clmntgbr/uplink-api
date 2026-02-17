@@ -6,19 +6,22 @@ import (
 	"uplink-api/domain"
 	"uplink-api/dto"
 	"uplink-api/repository"
+	"uplink-api/rules"
 
 	"github.com/google/uuid"
 )
 
 type ProjectService struct {
-	projectRepo *repository.ProjectRepository
-	userRepo    *repository.UserRepository
+	projectRepo  *repository.ProjectRepository
+	userRepo     *repository.UserRepository
+	projectRules *rules.ProjectRules
 }
 
-func NewProjectService(projectRepo *repository.ProjectRepository, userRepo *repository.UserRepository) *ProjectService {
+func NewProjectService(projectRepo *repository.ProjectRepository, userRepo *repository.UserRepository, projectRules *rules.ProjectRules) *ProjectService {
 	return &ProjectService{
-		projectRepo: projectRepo,
-		userRepo:    userRepo,
+		projectRepo:  projectRepo,
+		userRepo:     userRepo,
+		projectRules: projectRules,
 	}
 }
 
@@ -56,6 +59,10 @@ func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, in
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return dto.ProjectOutput{}, errors.New("user not found")
+	}
+
+	if err := s.projectRules.MaxProjectsPerUser(ctx, userID); err != nil {
+		return dto.ProjectOutput{}, err
 	}
 
 	project := &domain.Project{

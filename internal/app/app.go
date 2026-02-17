@@ -4,6 +4,7 @@ import (
 	"uplink-api/config"
 	"uplink-api/internal/router"
 	"uplink-api/repository"
+	"uplink-api/rules"
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
@@ -24,9 +25,11 @@ func New(cfg *config.Config) *App {
 	endpointRepo := repository.NewEndpointRepository(db)
 	workflowRepo := repository.NewWorkflowRepository(db)
 
+	projectRules := rules.NewProjectRules(projectRepo)
+
 	authenticateService := service.NewAuthenticateService(userRepo, projectRepo, cfg)
 	userService := service.NewUserService(userRepo)
-	projectService := service.NewProjectService(projectRepo, userRepo)
+	projectService := service.NewProjectService(projectRepo, userRepo, projectRules)
 	endpointService := service.NewEndpointService(endpointRepo, projectRepo, userRepo)
 	workflowService := service.NewWorkflowService(workflowRepo, projectRepo, userRepo)
 
