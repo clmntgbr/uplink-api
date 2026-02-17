@@ -72,7 +72,7 @@ func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, in
 func (s *ProjectService) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (bool, error) {
 	err := s.projectRepo.ActivateProject(ctx, userID, projectID)
 	if err != nil {
-		return false, errors.New("project not found or access denied")
+		return false, err
 	}
 
 	return true, nil

@@ -62,7 +62,7 @@ func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUI
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("project not found or access denied")
+			return errors.New("project not found")
 		}
 		return err
 	}
