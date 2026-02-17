@@ -5,7 +5,6 @@ import (
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
 	"uplink-api/service"
-	"uplink-api/validator"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -24,16 +23,12 @@ func NewProjectHandler(projectService *service.ProjectService) *ProjectHandler {
 func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
+		return sendUnauthorized(c)
 	}
 
 	projects, err := h.projectService.GetProjects(c.Context(), userID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendInternalError(c, err)
 	}
 
 	return c.JSON(projects)
@@ -42,30 +37,22 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
+		return sendUnauthorized(c)
 	}
 
 	projectID := c.Params("id")
 	if projectID == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid project ID",
-		})
+		return sendBadRequest(c, "Invalid project ID")
 	}
 
 	projectUUID, err := uuid.Parse(projectID)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid project ID format",
-		})
+		return sendBadRequest(c, "Invalid project ID format")
 	}
 
 	project, err := h.projectService.GetProjectByID(c.Context(), userID, projectUUID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendInternalError(c, err)
 	}
 
 	return c.JSON(project)
@@ -74,31 +61,17 @@ func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
+		return sendUnauthorized(c)
 	}
 
 	var req dto.CreateProjectInput
-
-	if err := c.Bind().JSON(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-		})
-	}
-
-	if err := validator.ValidateStruct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Validation failed",
-			"errors":  validator.FormatValidationErrors(err),
-		})
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
 	}
 
 	project, err := h.projectService.CreateProject(c.Context(), userID, req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendInternalError(c, err)
 	}
 
 	return c.JSON(project)
@@ -107,24 +80,12 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 	userID, err := ctxutil.GetUserID(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
+		return sendUnauthorized(c)
 	}
 
 	var req dto.ActivateProjectInput
-
-	if err := c.Bind().JSON(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-		})
-	}
-
-	if err := validator.ValidateStruct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Validation failed",
-			"errors":  validator.FormatValidationErrors(err),
-		})
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
 	}
 
 	log.Println("User ID: ", userID)
@@ -132,16 +93,12 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 
 	projectUUID, err := uuid.Parse(req.ProjectID)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid project ID format",
-		})
+		return sendBadRequest(c, "Invalid project ID format")
 	}
 
 	activated, err := h.projectService.ActivateProject(c.Context(), userID, projectUUID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendInternalError(c, err)
 	}
 
 	return c.JSON(fiber.Map{

@@ -3,7 +3,6 @@ package handler
 import (
 	"uplink-api/dto"
 	"uplink-api/service"
-	"uplink-api/validator"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -20,18 +19,8 @@ func NewAuthenticateHandler(authService *service.AuthenticateService) *Authentic
 
 func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 	var req dto.LoginInput
-
-	if err := c.Bind().JSON(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-		})
-	}
-
-	if err := validator.ValidateStruct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Validation failed",
-			"errors":  validator.FormatValidationErrors(err),
-		})
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
 	}
 
 	loginOutput, err := h.authenticateService.Login(req)
@@ -46,18 +35,8 @@ func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 
 func (h *AuthenticateHandler) Register(c fiber.Ctx) error {
 	var req dto.RegisterInput
-
-	if err := c.Bind().JSON(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-		})
-	}
-
-	if err := validator.ValidateStruct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Validation failed",
-			"errors":  validator.FormatValidationErrors(err),
-		})
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
 	}
 
 	registerOutput, err := h.authenticateService.Register(c, req)

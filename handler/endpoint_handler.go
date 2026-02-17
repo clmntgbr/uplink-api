@@ -4,7 +4,6 @@ import (
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
 	"uplink-api/service"
-	"uplink-api/validator"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -22,31 +21,17 @@ func NewEndpointHandler(endpointService *service.EndpointService) *EndpointHandl
 func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 	activeProjectID, err := ctxutil.GetActiveProjectID(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
+		return sendUnauthorized(c)
 	}
 
 	var req dto.CreateEndpointInput
-
-	if err := c.Bind().JSON(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
-		})
-	}
-
-	if err := validator.ValidateStruct(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Validation failed",
-			"errors":  validator.FormatValidationErrors(err),
-		})
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
 	}
 
 	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), activeProjectID, req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendInternalError(c, err)
 	}
 
 	return c.JSON(endpoint)
@@ -55,16 +40,12 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 	activeProjectID, err := ctxutil.GetActiveProjectID(c)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
+		return sendUnauthorized(c)
 	}
 
 	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendInternalError(c, err)
 	}
 
 	return c.JSON(endpoints)
