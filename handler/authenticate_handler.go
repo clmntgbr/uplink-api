@@ -25,9 +25,7 @@ func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 
 	loginOutput, err := h.authenticateService.Login(req)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendUnauthorized(c)
 	}
 
 	return c.JSON(loginOutput)
@@ -41,9 +39,7 @@ func (h *AuthenticateHandler) Register(c fiber.Ctx) error {
 
 	registerOutput, err := h.authenticateService.Register(c, req)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": err.Error(),
-		})
+		return sendUnauthorized(c)
 	}
 
 	return c.JSON(registerOutput)
