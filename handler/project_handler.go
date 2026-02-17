@@ -71,7 +71,7 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 
 	project, err := h.projectService.CreateProject(c.Context(), userID, req)
 	if err != nil {
-		return sendInternalError(c, err)
+		return sendBadRequest(c, err)
 	}
 
 	return c.JSON(project)
