@@ -24,13 +24,8 @@ func NewEndpointService(endpointRepo *repository.EndpointRepository, projectRepo
 	}
 }
 
-func (s *EndpointService) CreateEndpoint(ctx context.Context, userID uuid.UUID, projectID uuid.UUID, req dto.CreateEndpointInput) (dto.EndpointOutput, error) {
-	user, err := s.userRepo.FindByID(userID)
-	if err != nil {
-		return dto.EndpointOutput{}, errors.New("user not found")
-	}
-
-	project, err := s.projectRepo.FindByID(ctx, projectID, user)
+func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUID, req dto.CreateEndpointInput) (dto.EndpointOutput, error) {
+	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
 		return dto.EndpointOutput{}, errors.New("project not found")
 	}
@@ -51,13 +46,8 @@ func (s *EndpointService) CreateEndpoint(ctx context.Context, userID uuid.UUID, 
 	return dto.NewEndpointOutput(*endpoint), nil
 }
 
-func (s *EndpointService) GetEndpoints(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) ([]dto.EndpointOutput, error) {
-	user, err := s.userRepo.FindByID(userID)
-	if err != nil {
-		return nil, errors.New("user not found")
-	}
-
-	project, err := s.projectRepo.FindByID(ctx, projectID, user)
+func (s *EndpointService) GetEndpoints(ctx context.Context, projectID uuid.UUID) ([]dto.EndpointOutput, error) {
+	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
 		return nil, errors.New("project not found")
 	}

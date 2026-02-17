@@ -43,7 +43,7 @@ func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, p
 		return dto.ProjectOutput{}, errors.New("user not found")
 	}
 
-	project, err := s.projectRepo.FindByID(ctx, projectID, user)
+	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, user)
 	if err != nil {
 		return dto.ProjectOutput{}, errors.New("project not found")
 	}

@@ -11,6 +11,9 @@ type EndpointOutput struct {
 	Path    string `json:"path"`
 	Method  string `json:"method"`
 	Timeout int    `json:"timeout"`
+	Header  map[string]any `json:"header"`
+	Body    map[string]any `json:"body"`
+	Query   map[string]any `json:"query"`
 }
 
 type CreateEndpointInput struct {
@@ -19,6 +22,9 @@ type CreateEndpointInput struct {
 	Path    string `json:"path" validate:"required"`
 	Method  string `json:"method" validate:"required"`
 	Timeout int    `json:"timeout" validate:"required"`
+	Header  map[string]any `json:"header" validate:"required"`
+	Body    map[string]any `json:"body" validate:"required"`
+	Query   map[string]any `json:"query" validate:"required"`
 }
 
 func NewEndpointOutput(endpoint domain.Endpoint) EndpointOutput {
@@ -29,6 +35,9 @@ func NewEndpointOutput(endpoint domain.Endpoint) EndpointOutput {
 		Path:    endpoint.Path,
 		Method:  endpoint.Method,
 		Timeout: endpoint.Timeout,
+		Header:  endpoint.Header,
+		Body:    endpoint.Body,
+		Query:   endpoint.Query,
 	}
 }
 

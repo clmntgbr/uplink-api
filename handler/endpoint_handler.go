@@ -20,13 +20,6 @@ func NewEndpointHandler(endpointService *service.EndpointService) *EndpointHandl
 }
 
 func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
-	}
-
 	activeProjectID, err := ctxutil.GetActiveProjectID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -49,7 +42,7 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 		})
 	}
 
-	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), userID, activeProjectID, req)
+	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), activeProjectID, req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
@@ -60,13 +53,6 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 }
 
 func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": "Unauthorized",
-		})
-	}
-
 	activeProjectID, err := ctxutil.GetActiveProjectID(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -74,7 +60,7 @@ func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 		})
 	}
 
-	projects, err := h.endpointService.GetEndpoints(c.Context(), userID, activeProjectID)
+	projects, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": err.Error(),
