@@ -18,10 +18,10 @@ type PaginateResponse struct {
 	Members    any `json:"members"`
 }
 
-func NewPaginateResponse(data any, total int, query PaginateQuery) PaginateResponse {
+func NewPaginateResponse(members any, total int, query PaginateQuery) PaginateResponse {
 	totalPages := int(math.Ceil(float64(total) / float64(query.Limit)))
 	return PaginateResponse{
-		Members:    data,
+		Members:    members,
 		Total:      total,
 		Page:       query.Page,
 		Limit:      query.Limit,
