@@ -12,6 +12,10 @@ type ProjectOutput struct {
 	IsActive bool   `json:"isActive"`
 }
 
+type CreateProjectInput struct {
+	Name string `json:"name"`
+}
+
 func NewProjectOutput(project domain.Project, activeProjectID uuid.UUID) ProjectOutput {
 	isActive := false
 	if activeProjectID != uuid.Nil && activeProjectID == project.ID {

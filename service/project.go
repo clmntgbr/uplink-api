@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"uplink-api/domain"
 	"uplink-api/dto"
 	"uplink-api/repository"
 
@@ -49,4 +50,21 @@ func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, p
 
 	output := dto.NewProjectOutput(*project, user.ActiveProjectID)
 	return output, nil
+}
+
+func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
+	project := &domain.Project{
+		Name: input.Name,
+		Users: []domain.User{
+			{
+				ID: userID,
+			},
+		},
+	}
+
+	if err := s.projectRepo.Create(ctx, project); err != nil {
+		return dto.ProjectOutput{}, err
+	}
+
+	return dto.NewProjectOutput(*project, userID), nil
 }

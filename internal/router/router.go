@@ -53,4 +53,5 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 
 	api.Get("/projects", projectHandler.GetProjects)
 	api.Get("/projects/:id", projectHandler.GetProjectByID)
+	api.Post("/projects", projectHandler.CreateProject)
 }
