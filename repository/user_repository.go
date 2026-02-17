@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"uplink-api/domain"
 
 	"github.com/google/uuid"
@@ -35,4 +36,15 @@ func (r *UserRepository) FindByID(id uuid.UUID) (*domain.User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *UserRepository) CountProjectsByUserID(ctx context.Context, userID uuid.UUID) (int64, error) {
+	var count int64
+	err := r.db.WithContext(ctx).Model(&domain.Project{}).
+		Where("user_id = ?", userID).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
