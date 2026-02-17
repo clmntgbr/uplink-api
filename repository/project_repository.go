@@ -72,4 +72,3 @@ func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUI
 		Where("id = ?", userID).
 		Update("active_project_id", projectID).Error
 }
-
