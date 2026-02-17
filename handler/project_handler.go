@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"log"
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
@@ -42,12 +42,12 @@ func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 
 	projectID := c.Params("id")
 	if projectID == "" {
-		return sendBadRequest(c, "Invalid project ID")
+		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
 	projectUUID, err := uuid.Parse(projectID)
 	if err != nil {
-		return sendBadRequest(c, "Invalid project ID format")
+		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
 	project, err := h.projectService.GetProjectByID(c.Context(), userID, projectUUID)
@@ -88,12 +88,9 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 		return err
 	}
 
-	log.Println("User ID: ", userID)
-	log.Println("Project ID: ", req.ProjectID)
-
 	projectUUID, err := uuid.Parse(req.ProjectID)
 	if err != nil {
-		return sendBadRequest(c, "Invalid project ID format")
+		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
 	activated, err := h.projectService.ActivateProject(c.Context(), userID, projectUUID)

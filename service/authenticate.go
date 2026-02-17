@@ -2,11 +2,11 @@ package service
 
 import (
 	"context"
-	"errors"
 	"time"
 	"uplink-api/config"
 	"uplink-api/domain"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/repository"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -37,11 +37,11 @@ func NewAuthenticateService(userRepo *repository.UserRepository, projectRepo *re
 func (s *AuthenticateService) Login(loginInput dto.LoginInput) (*dto.LoginOutput, error) {
 	user, err := s.userRepo.FindByEmail(loginInput.Email)
 	if err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, errors.ErrInvalidCredentials
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginInput.Password)); err != nil {
-		return nil, errors.New("invalid credentials")
+		return nil, errors.ErrInvalidCredentials
 	}
 
 	token, err := s.GenerateToken(user)
@@ -58,7 +58,7 @@ func (s *AuthenticateService) Login(loginInput dto.LoginInput) (*dto.LoginOutput
 func (s *AuthenticateService) Register(ctx context.Context, registerInput dto.RegisterInput) (*dto.RegisterOutput, error) {
 	existingUser, _ := s.userRepo.FindByEmail(registerInput.Email)
 	if existingUser != nil {
-		return nil, errors.New("email already exists")
+		return nil, errors.ErrUserAlreadyExists
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registerInput.Password), bcrypt.DefaultCost)
@@ -117,7 +117,7 @@ func (s *AuthenticateService) GenerateToken(user *domain.User) (string, error) {
 func (s *AuthenticateService) ValidateToken(tokenString string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("unexpected signing method")
+			return nil, errors.ErrUnexpectedSigningMethod
 		}
 		return []byte(s.config.JWTSecret), nil
 	})
@@ -130,5 +130,5 @@ func (s *AuthenticateService) ValidateToken(tokenString string) (*JWTClaims, err
 		return claims, nil
 	}
 
-	return nil, errors.New("invalid token")
+	return nil, errors.ErrInvalidToken
 }

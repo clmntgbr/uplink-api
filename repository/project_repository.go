@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"errors"
+	"uplink-api/errors"
 
 	"uplink-api/domain"
 
@@ -74,10 +74,7 @@ func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUI
 		First(&project).Error
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("project not found")
-		}
-		return err
+		return errors.ErrProjectNotFound
 	}
 
 	return r.db.WithContext(ctx).

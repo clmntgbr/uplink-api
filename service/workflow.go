@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
 	"uplink-api/domain"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/repository"
 
 	"github.com/google/uuid"
@@ -27,7 +27,7 @@ func NewWorkflowService(workflowRepo *repository.WorkflowRepository, projectRepo
 func (s *WorkflowService) CreateWorkflow(ctx context.Context, projectID uuid.UUID, req dto.CreateWorkflowInput) (dto.WorkflowOutput, error) {
 	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
-		return dto.WorkflowOutput{}, errors.New("project not found")
+		return dto.WorkflowOutput{}, errors.ErrProjectNotFound
 	}
 
 	workflow := &domain.Workflow{
@@ -46,12 +46,12 @@ func (s *WorkflowService) CreateWorkflow(ctx context.Context, projectID uuid.UUI
 func (s *WorkflowService) GetWorkflows(ctx context.Context, projectID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
 	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
-		return dto.PaginateResponse{}, errors.New("project not found")
+		return dto.PaginateResponse{}, errors.ErrProjectNotFound
 	}
 
 	workflows, total, err := s.workflowRepo.FindAllByProjectID(ctx, project.ID, query)
 	if err != nil {
-		return dto.PaginateResponse{}, errors.New("workflows not found")
+		return dto.PaginateResponse{}, errors.ErrWorkflowsNotFound
 	}
 
 	return dto.NewPaginateResponse(workflows, int(total), query), nil

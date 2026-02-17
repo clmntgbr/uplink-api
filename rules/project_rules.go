@@ -2,7 +2,7 @@ package rules
 
 import (
 	"context"
-	"uplink-api/domain"
+	"uplink-api/errors"
 	"uplink-api/repository"
 
 	"github.com/google/uuid"
@@ -20,11 +20,11 @@ func NewProjectRules(projectRepo *repository.ProjectRepository) *ProjectRules {
 func (p *ProjectRules) MaxProjectsPerUser(ctx context.Context, userID uuid.UUID) error {
 	count, err := p.projectRepo.CountProjectsByUserID(ctx, userID)
 	if err != nil {
-		return domain.ErrUserNotFound
+		return errors.ErrUserNotFound
 	}
 
 	if count >= 10 {
-		return domain.ErrMaxProjectsReached
+		return errors.ErrMaxProjectsReached
 	}
 
 	return nil

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"uplink-api/errors"
 	"uplink-api/validator"
 
 	"github.com/gofiber/fiber/v3"
@@ -9,13 +10,13 @@ import (
 func bindAndValidate(c fiber.Ctx, req interface{}) error {
 	if err := c.Bind().JSON(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid request body",
+			"message": errors.ErrInvalidRequestBody.Error(),
 		})
 	}
 
 	if err := validator.ValidateStruct(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Validation failed",
+			"message": errors.ErrInvalidRequestBody.Error(),
 			"errors":  validator.FormatValidationErrors(err),
 		})
 	}
@@ -25,7 +26,7 @@ func bindAndValidate(c fiber.Ctx, req interface{}) error {
 
 func sendUnauthorized(c fiber.Ctx) error {
 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-		"message": "Unauthorized",
+		"message": errors.ErrUserNotAuthenticated.Error(),
 	})
 }
 
@@ -35,8 +36,8 @@ func sendInternalError(c fiber.Ctx, err error) error {
 	})
 }
 
-func sendBadRequest(c fiber.Ctx, message string) error {
+func sendBadRequest(c fiber.Ctx, message error) error {
 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-		"message": message,
+		"message": message.Error(),
 	})
 }

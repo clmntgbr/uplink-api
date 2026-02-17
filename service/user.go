@@ -1,8 +1,8 @@
 package service
 
 import (
-	"errors"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/repository"
 
 	"github.com/google/uuid"
@@ -21,7 +21,7 @@ func NewUserService(userRepo *repository.UserRepository) *UserService {
 func (s *UserService) GetUser(userID uuid.UUID) (*dto.UserOutput, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return nil, errors.ErrUserNotFound
 	}
 
 	output := dto.NewUserOutput(*user)

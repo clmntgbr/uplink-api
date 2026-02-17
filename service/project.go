@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
 	"uplink-api/domain"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/repository"
 	"uplink-api/rules"
 
@@ -28,12 +28,12 @@ func NewProjectService(projectRepo *repository.ProjectRepository, userRepo *repo
 func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID) ([]dto.ProjectOutput, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
-		return nil, errors.New("user not found")
+		return nil, errors.ErrUserNotFound
 	}
 
 	projects, err := s.projectRepo.FindAllByUserID(ctx, user)
 	if err != nil {
-		return nil, errors.New("projects not found")
+		return nil, errors.ErrProjectsNotFound
 	}
 
 	output := dto.NewProjectsOutput(projects, user.ActiveProjectID)
@@ -43,12 +43,12 @@ func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID) ([]d
 func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (dto.ProjectOutput, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
-		return dto.ProjectOutput{}, errors.New("user not found")
+		return dto.ProjectOutput{}, errors.ErrUserNotFound
 	}
 
 	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, user)
 	if err != nil {
-		return dto.ProjectOutput{}, errors.New("project not found")
+		return dto.ProjectOutput{}, errors.ErrProjectNotFound
 	}
 
 	output := dto.NewProjectOutput(*project, user.ActiveProjectID)
@@ -58,7 +58,7 @@ func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, p
 func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
-		return dto.ProjectOutput{}, errors.New("user not found")
+		return dto.ProjectOutput{}, errors.ErrUserNotFound
 	}
 
 	if err := s.projectRules.MaxProjectsPerUser(ctx, userID); err != nil {

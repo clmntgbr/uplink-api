@@ -3,6 +3,7 @@ package handler
 import (
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
@@ -45,7 +46,7 @@ func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
 
 	var query dto.PaginateQuery
 	if err := c.Bind().Query(&query); err != nil {
-		return sendBadRequest(c, "invalid query params")
+		return sendBadRequest(c, errors.ErrInvalidQueryParams)
 	}
 
 	query.Normalize()

@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"errors"
 	"uplink-api/domain"
 	"uplink-api/dto"
+	"uplink-api/errors"
 	"uplink-api/repository"
 
 	"github.com/google/uuid"
@@ -27,7 +27,7 @@ func NewEndpointService(endpointRepo *repository.EndpointRepository, projectRepo
 func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUID, req dto.CreateEndpointInput) (dto.EndpointOutput, error) {
 	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
-		return dto.EndpointOutput{}, errors.New("project not found")
+		return dto.EndpointOutput{}, errors.ErrProjectNotFound
 	}
 
 	endpoint := &domain.Endpoint{
@@ -52,12 +52,12 @@ func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUI
 func (s *EndpointService) GetEndpoints(ctx context.Context, projectID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
 	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
 	if err != nil {
-		return dto.PaginateResponse{}, errors.New("project not found")
+		return dto.PaginateResponse{}, errors.ErrProjectNotFound
 	}
 
 	endpoints, total, err := s.endpointRepo.FindAllByProjectID(ctx, project.ID, query)
 	if err != nil {
-		return dto.PaginateResponse{}, errors.New("endpoints not found")
+		return dto.PaginateResponse{}, errors.ErrEndpointsNotFound
 	}
 
 	return dto.NewPaginateResponse(endpoints, int(total), query), nil
