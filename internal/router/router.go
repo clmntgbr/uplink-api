@@ -17,6 +17,7 @@ type Dependencies struct {
 	UserRepo            *repository.UserRepository
 	UserService         *service.UserService
 	ProjectService      *service.ProjectService
+	EndpointService     *service.EndpointService
 }
 
 func Setup(app *fiber.App, deps Dependencies) {
@@ -43,6 +44,7 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	authenticateHandler := handler.NewAuthenticateHandler(deps.AuthenticateService)
 	userHandler := handler.NewUserHandler(deps.UserService)
 	projectHandler := handler.NewProjectHandler(deps.ProjectService)
+	endpointHandler := handler.NewEndpointHandler(deps.EndpointService)
 
 	api.Post("/login", authenticateHandler.Login)
 	api.Post("/register", authenticateHandler.Register)
@@ -55,4 +57,7 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api.Get("/projects/:id", projectHandler.GetProjectByID)
 	api.Post("/projects", projectHandler.CreateProject)
 	api.Post("/projects/activate", projectHandler.ActivateProject)
+
+	api.Get("/endpoints", endpointHandler.GetEndpoints)
+	api.Post("/endpoints", endpointHandler.CreateEndpoint)
 }

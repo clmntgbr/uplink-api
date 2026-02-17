@@ -53,11 +53,16 @@ func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, p
 }
 
 func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return dto.ProjectOutput{}, errors.New("user not found")
+	}
+
 	project := &domain.Project{
 		Name: input.Name,
 		Users: []domain.User{
 			{
-				ID: userID,
+				ID: user.ID,
 			},
 		},
 	}
