@@ -26,14 +26,14 @@ func NewProjectService(projectRepo *repository.ProjectRepository, userRepo *repo
 }
 
 func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
+	projects, total, err := s.projectRepo.FindAllByUserID(ctx, userID, query)
+	if err != nil {
+		return dto.PaginateResponse{}, errors.ErrProjectsNotFound
+	}
+
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return dto.PaginateResponse{}, errors.ErrUserNotFound
-	}
-
-	projects, total, err := s.projectRepo.FindAllByUserID(ctx, user, query)
-	if err != nil {
-		return dto.PaginateResponse{}, errors.ErrProjectsNotFound
 	}
 
 	outputs := dto.NewProjectsOutput(projects, user.ActiveProjectID)

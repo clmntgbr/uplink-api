@@ -25,13 +25,13 @@ func (r *ProjectRepository) Create(ctx context.Context, project *domain.Project)
 	})
 }
 
-func (r *ProjectRepository) FindAllByUserID(ctx context.Context, user *domain.User, q dto.PaginateQuery) ([]domain.Project, int64, error) {
+func (r *ProjectRepository) FindAllByUserID(ctx context.Context, userID uuid.UUID, q dto.PaginateQuery) ([]domain.Project, int64, error) {
 	var projects []domain.Project
 
 	db := r.db.WithContext(ctx).
 		Model(&domain.Project{}).
 		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
-		Where("user_projects.user_id = ?", user.ID)
+		Where("user_projects.user_id = ?", userID)
 
 	if q.Search != "" {
 		db = db.Where("projects.name ILIKE ?", "%"+q.Search+"%")
