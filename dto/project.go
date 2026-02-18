@@ -13,11 +13,11 @@ type ProjectOutput struct {
 }
 
 type CreateProjectInput struct {
-	Name string `json:"name" validate:"required"`
+	Name string `json:"name" validate:"required,min=2,max=255"`
 }
 
 type UpdateProjectInput struct {
-	Name string `json:"name" validate:"required"`
+	Name string `json:"name" validate:"required,min=2,max=255"`
 }
 
 type ActivateProjectInput struct {
