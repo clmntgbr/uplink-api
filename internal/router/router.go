@@ -71,6 +71,7 @@ func setupProjectRoutes(api fiber.Router, deps Dependencies) {
 	api.Get("/projects", projectHandler.GetProjects)
 	api.Get("/projects/:id", projectHandler.GetProjectByID)
 	api.Post("/projects", projectHandler.CreateProject)
+	api.Put("/projects/:id", projectHandler.UpdateProject)
 	api.Post("/projects/activate", projectHandler.ActivateProject)
 }
 

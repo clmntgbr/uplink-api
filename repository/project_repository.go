@@ -25,6 +25,12 @@ func (r *ProjectRepository) Create(ctx context.Context, project *domain.Project)
 	})
 }
 
+func (r *ProjectRepository) Update(ctx context.Context, project *domain.Project) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		return tx.Model(project).Updates(project).Error
+	})
+}
+
 func (r *ProjectRepository) FindAllByUserID(ctx context.Context, userID uuid.UUID, q dto.PaginateQuery) ([]domain.Project, int64, error) {
 	var projects []domain.Project
 

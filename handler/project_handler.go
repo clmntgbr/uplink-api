@@ -85,6 +85,25 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(project)
 }
 
+func (h *ProjectHandler) UpdateProject(c fiber.Ctx) error {
+	user, err := ctxutil.GetUser(c)
+	if err != nil {
+		return sendUnauthorized(c)
+	}
+
+	var req dto.UpdateProjectInput
+	if err := bindAndValidate(c, &req); err != nil {
+		return err
+	}
+
+	project, err := h.projectService.UpdateProject(c.Context(), user, req)
+	if err != nil {
+		return sendBadRequest(c, err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(project)
+}
+
 func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 	user, err := ctxutil.GetUser(c)
 	if err != nil {

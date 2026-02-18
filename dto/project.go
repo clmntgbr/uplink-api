@@ -16,6 +16,10 @@ type CreateProjectInput struct {
 	Name string `json:"name" validate:"required"`
 }
 
+type UpdateProjectInput struct {
+	Name string `json:"name" validate:"required"`
+}
+
 type ActivateProjectInput struct {
 	ProjectID string `json:"projectId" validate:"required"`
 }

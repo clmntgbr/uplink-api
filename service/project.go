@@ -66,6 +66,21 @@ func (s *ProjectService) CreateProject(ctx context.Context, user *domain.User, i
 	return dto.NewProjectOutput(*project, user.ID), nil
 }
 
+func (s *ProjectService) UpdateProject(ctx context.Context, user *domain.User, input dto.UpdateProjectInput) (dto.ProjectOutput, error) {
+	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, user.ID, user.ActiveProjectID)
+	if err != nil {
+		return dto.ProjectOutput{}, errors.ErrProjectNotFound
+	}
+
+	project.Name = input.Name
+
+	if err := s.projectRepo.Update(ctx, project); err != nil {
+		return dto.ProjectOutput{}, err
+	}
+
+	return dto.NewProjectOutput(*project, user.ActiveProjectID), nil
+}
+
 func (s *ProjectService) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (bool, error) {
 	err := s.projectRepo.ActivateProject(ctx, userID, projectID)
 	if err != nil {
