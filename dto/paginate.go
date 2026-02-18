@@ -3,8 +3,9 @@ package dto
 import "math"
 
 const (
-	OrderByAsc  = "asc"
-	OrderByDesc = "desc"
+	OrderByAsc   = "asc"
+	OrderByDesc  = "desc"
+	DefaultLimit = 20
 )
 
 type PaginateQuery struct {
@@ -39,7 +40,7 @@ func (p *PaginateQuery) Normalize() {
 		p.Page = 1
 	}
 	if p.Limit <= 0 || p.Limit > 100 {
-		p.Limit = 20
+		p.Limit = DefaultLimit
 	}
 	if p.OrderBy != OrderByAsc && p.OrderBy != OrderByDesc {
 		p.OrderBy = OrderByAsc
