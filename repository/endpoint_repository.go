@@ -39,14 +39,14 @@ func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID u
 		return nil, 0, err
 	}
 
-	sortBy := "created_at"
+	sortBy := dto.OrderByAsc
 	if q.SortBy != "" {
 		sortBy = q.SortBy
 	}
 
-	orderBy := "desc"
-	if q.OrderBy == "asc" {
-		orderBy = "asc"
+	orderBy := dto.OrderByDesc
+	if q.OrderBy == dto.OrderByAsc {
+		orderBy = dto.OrderByAsc
 	}
 
 	err := db.

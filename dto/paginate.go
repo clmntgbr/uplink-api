@@ -2,6 +2,11 @@ package dto
 
 import "math"
 
+var (
+	OrderByAsc  = "asc"
+	OrderByDesc = "desc"
+)
+
 type PaginateQuery struct {
 	Page    int    `query:"page"`
 	Limit   int    `query:"limit"`
@@ -36,8 +41,8 @@ func (p *PaginateQuery) Normalize() {
 	if p.Limit <= 0 || p.Limit > 100 {
 		p.Limit = 20
 	}
-	if p.OrderBy != "asc" && p.OrderBy != "desc" {
-		p.OrderBy = "asc"
+	if p.OrderBy != OrderByAsc && p.OrderBy != OrderByDesc {
+		p.OrderBy = OrderByAsc
 	}
 }
 
