@@ -1,6 +1,7 @@
 package ctxutil
 
 import (
+	"uplink-api/domain"
 	"uplink-api/errors"
 
 	"github.com/gofiber/fiber/v3"
@@ -9,8 +10,7 @@ import (
 
 const (
 	ActiveProjectIDKey = "activeProjectID"
-	UserIDKey          = "userID"
-	UserEmailKey       = "userEmail"
+	UserKey            = "user"
 )
 
 func GetActiveProjectID(c fiber.Ctx) (uuid.UUID, error) {
@@ -21,10 +21,10 @@ func GetActiveProjectID(c fiber.Ctx) (uuid.UUID, error) {
 	return activeProjectID, nil
 }
 
-func GetUserID(c fiber.Ctx) (uuid.UUID, error) {
-	userID, ok := c.Locals(UserIDKey).(uuid.UUID)
+func GetUser(c fiber.Ctx) (*domain.User, error) {
+	user, ok := c.Locals(UserKey).(*domain.User)
 	if !ok {
-		return uuid.Nil, errors.ErrUserNotAuthenticated
+		return nil, errors.ErrUserNotAuthenticated
 	}
-	return userID, nil
+	return user, nil
 }

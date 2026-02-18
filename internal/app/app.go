@@ -28,7 +28,7 @@ func New(cfg *config.Config) *App {
 	projectRules := rules.NewProjectRules(projectRepo)
 
 	authenticateService := service.NewAuthenticateService(userRepo, projectRepo, cfg)
-	userService := service.NewUserService(userRepo)
+	userService := service.NewUserService()
 	projectService := service.NewProjectService(projectRepo, userRepo, projectRules)
 	endpointService := service.NewEndpointService(endpointRepo, projectRepo, userRepo)
 	workflowService := service.NewWorkflowService(workflowRepo, projectRepo, userRepo)

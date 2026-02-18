@@ -18,15 +18,15 @@ func NewUserHandler(userService *service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) GetUser(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
+	user, err := ctxutil.GetUser(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
 
-	user, err := h.userService.GetUser(userID)
+	output, err := h.userService.GetUser(user)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(user)
+	return c.Status(fiber.StatusOK).JSON(output)
 }

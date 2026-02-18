@@ -1,29 +1,17 @@
 package service
 
 import (
+	"uplink-api/domain"
 	"uplink-api/dto"
-	"uplink-api/errors"
-	"uplink-api/repository"
-
-	"github.com/google/uuid"
 )
 
-type UserService struct {
-	userRepo *repository.UserRepository
+type UserService struct{}
+
+func NewUserService() *UserService {
+	return &UserService{}
 }
 
-func NewUserService(userRepo *repository.UserRepository) *UserService {
-	return &UserService{
-		userRepo: userRepo,
-	}
-}
-
-func (s *UserService) GetUser(userID uuid.UUID) (*dto.UserOutput, error) {
-	user, err := s.userRepo.FindByID(userID)
-	if err != nil {
-		return nil, errors.ErrUserNotFound
-	}
-
+func (s *UserService) GetUser(user *domain.User) (*dto.UserOutput, error) {
 	output := dto.NewUserOutput(*user)
 	return &output, nil
 }

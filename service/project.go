@@ -25,38 +25,28 @@ func NewProjectService(projectRepo *repository.ProjectRepository, userRepo *repo
 	}
 }
 
-func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
-	projects, total, err := s.projectRepo.FindAllByUserID(ctx, userID, query)
+func (s *ProjectService) GetProjects(ctx context.Context, user *domain.User, query dto.PaginateQuery) (dto.PaginateResponse, error) {
+	projects, total, err := s.projectRepo.FindAllByUserID(ctx, user.ID, query)
 	if err != nil {
 		return dto.PaginateResponse{}, errors.ErrProjectsNotFound
-	}
-
-	user, err := s.userRepo.FindByID(userID)
-	if err != nil {
-		return dto.PaginateResponse{}, errors.ErrUserNotFound
 	}
 
 	outputs := dto.NewProjectsOutput(projects, user.ActiveProjectID)
 	return dto.NewPaginateResponse(outputs, int(total), query), nil
 }
 
-func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (dto.ProjectOutput, error) {
-	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, userID)
+func (s *ProjectService) GetProjectByID(ctx context.Context, user *domain.User, projectID uuid.UUID) (dto.ProjectOutput, error) {
+	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, user.ID)
 	if err != nil {
 		return dto.ProjectOutput{}, errors.ErrProjectNotFound
-	}
-
-	user, err := s.userRepo.FindByID(userID)
-	if err != nil {
-		return dto.ProjectOutput{}, errors.ErrUserNotFound
 	}
 
 	output := dto.NewProjectOutput(*project, user.ActiveProjectID)
 	return output, nil
 }
 
-func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
-	if err := s.projectRules.MaxProjectsPerUser(ctx, userID); err != nil {
+func (s *ProjectService) CreateProject(ctx context.Context, user *domain.User, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
+	if err := s.projectRules.MaxProjectsPerUser(ctx, user.ID); err != nil {
 		return dto.ProjectOutput{}, err
 	}
 
@@ -64,7 +54,7 @@ func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, in
 		Name: input.Name,
 		Users: []domain.User{
 			{
-				ID: userID,
+				ID: user.ID,
 			},
 		},
 	}
@@ -73,7 +63,7 @@ func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, in
 		return dto.ProjectOutput{}, err
 	}
 
-	return dto.NewProjectOutput(*project, userID), nil
+	return dto.NewProjectOutput(*project, user.ID), nil
 }
 
 func (s *ProjectService) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (bool, error) {

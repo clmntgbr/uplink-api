@@ -21,7 +21,7 @@ func NewProjectHandler(projectService *service.ProjectService) *ProjectHandler {
 }
 
 func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
+	user, err := ctxutil.GetUser(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -33,7 +33,7 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 
 	query.Normalize()
 
-	projects, err := h.projectService.GetProjects(c.Context(), userID, query)
+	projects, err := h.projectService.GetProjects(c.Context(), user, query)
 
 	if err != nil {
 		return sendInternalError(c, err)
@@ -43,7 +43,7 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 }
 
 func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
+	user, err := ctxutil.GetUser(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -58,7 +58,7 @@ func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
-	project, err := h.projectService.GetProjectByID(c.Context(), userID, projectUUID)
+	project, err := h.projectService.GetProjectByID(c.Context(), user, projectUUID)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
@@ -67,7 +67,7 @@ func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 }
 
 func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
+	user, err := ctxutil.GetUser(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -77,7 +77,7 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 		return err
 	}
 
-	project, err := h.projectService.CreateProject(c.Context(), userID, req)
+	project, err := h.projectService.CreateProject(c.Context(), user, req)
 	if err != nil {
 		return sendBadRequest(c, err)
 	}
@@ -86,7 +86,7 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 }
 
 func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
-	userID, err := ctxutil.GetUserID(c)
+	user, err := ctxutil.GetUser(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -101,7 +101,7 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
-	activated, err := h.projectService.ActivateProject(c.Context(), userID, projectUUID)
+	activated, err := h.projectService.ActivateProject(c.Context(), user.ID, projectUUID)
 	if err != nil {
 		return sendInternalError(c, err)
 	}

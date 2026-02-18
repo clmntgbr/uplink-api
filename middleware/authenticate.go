@@ -95,8 +95,7 @@ func (m *AuthenticateMiddleware) Protected() fiber.Handler {
 			})
 		}
 
-		c.Locals(ctxutil.UserIDKey, user.ID)
-		c.Locals(ctxutil.UserEmailKey, user.Email)
+		c.Locals(ctxutil.UserKey, user)
 		c.Locals(ctxutil.ActiveProjectIDKey, user.ActiveProjectID)
 
 		return c.Next()
