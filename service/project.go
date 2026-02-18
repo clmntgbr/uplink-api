@@ -41,8 +41,7 @@ func (s *ProjectService) GetProjectByID(ctx context.Context, user *domain.User, 
 		return dto.ProjectOutput{}, errors.ErrProjectNotFound
 	}
 
-	output := dto.NewProjectOutput(*project, user.ActiveProjectID)
-	return output, nil
+	return dto.NewProjectOutput(*project, user.ActiveProjectID), nil
 }
 
 func (s *ProjectService) CreateProject(ctx context.Context, user *domain.User, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
