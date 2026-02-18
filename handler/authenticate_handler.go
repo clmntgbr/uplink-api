@@ -28,7 +28,7 @@ func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	return c.JSON(loginOutput)
+	return c.Status(fiber.StatusOK).JSON(loginOutput)
 }
 
 func (h *AuthenticateHandler) Register(c fiber.Ctx) error {
@@ -42,5 +42,5 @@ func (h *AuthenticateHandler) Register(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	return c.JSON(registerOutput)
+	return c.Status(fiber.StatusCreated).JSON(registerOutput)
 }

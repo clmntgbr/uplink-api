@@ -35,7 +35,7 @@ func (h *WorkflowHandler) CreateWorkflow(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(workflow)
+	return c.Status(fiber.StatusCreated).JSON(workflow)
 }
 
 func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
@@ -56,5 +56,5 @@ func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(workflows)
+	return c.Status(fiber.StatusOK).JSON(workflows)
 }

@@ -28,5 +28,5 @@ func (h *UserHandler) GetUser(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(user)
+	return c.Status(fiber.StatusOK).JSON(user)
 }

@@ -31,7 +31,7 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(projects)
+	return c.Status(fiber.StatusOK).JSON(projects)
 }
 
 func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
@@ -55,7 +55,7 @@ func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(project)
+	return c.Status(fiber.StatusOK).JSON(project)
 }
 
 func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
@@ -74,7 +74,7 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 		return sendBadRequest(c, err)
 	}
 
-	return c.JSON(project)
+	return c.Status(fiber.StatusCreated).JSON(project)
 }
 
 func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
@@ -98,7 +98,7 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"activated": activated,
 	})
 }

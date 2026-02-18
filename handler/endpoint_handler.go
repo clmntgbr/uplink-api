@@ -35,7 +35,7 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(endpoint)
+	return c.Status(fiber.StatusCreated).JSON(endpoint)
 }
 
 func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
@@ -56,5 +56,5 @@ func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 		return sendInternalError(c, err)
 	}
 
-	return c.JSON(endpoints)
+	return c.Status(fiber.StatusOK).JSON(endpoints)
 }
