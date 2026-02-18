@@ -7,6 +7,7 @@ import (
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
 )
 
 type WorkflowHandler struct {
@@ -36,6 +37,59 @@ func (h *WorkflowHandler) CreateWorkflow(c fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(workflow)
+}
+
+func (h *WorkflowHandler) UpdateWorkflow(c fiber.Ctx) error {
+	var req dto.UpdateWorkflowInput
+	if err := bindAndValidate(c, &req); err != nil {
+		return nil
+	}
+
+	workflowID := c.Params("id")
+	if workflowID == "" {
+		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
+	}
+
+	workflowUUID, err := uuid.Parse(workflowID)
+	if err != nil {
+		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
+	}
+
+	projectUUID, err := ctxutil.GetActiveProjectID(c)
+	if err != nil {
+		return sendUnauthorized(c)
+	}
+
+	workflow, err := h.workflowService.UpdateWorkflow(c.Context(), projectUUID, workflowUUID, req)
+	if err != nil {
+		return sendInternalError(c, err)
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(workflow)
+}
+
+func (h *WorkflowHandler) GetWorkflowByID(c fiber.Ctx) error {
+	workflowID := c.Params("id")
+	if workflowID == "" {
+		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
+	}
+
+	workflowUUID, err := uuid.Parse(workflowID)
+	if err != nil {
+		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
+	}
+
+	projectUUID, err := ctxutil.GetActiveProjectID(c)
+	if err != nil {
+		return sendUnauthorized(c)
+	}
+
+	workflow, err := h.workflowService.GetWorkflowByID(c.Context(), projectUUID, workflowUUID)
+	if err != nil {
+		return sendInternalError(c, err)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(workflow)
 }
 
 func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {

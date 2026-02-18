@@ -96,7 +96,17 @@ func (h *ProjectHandler) UpdateProject(c fiber.Ctx) error {
 		return nil
 	}
 
-	project, err := h.projectService.UpdateProject(c.Context(), user, req)
+	projectID := c.Params("id")
+	if projectID == "" {
+		return sendBadRequest(c, errors.ErrInvalidProjectID)
+	}
+
+	projectUUID, err := uuid.Parse(projectID)
+	if err != nil {
+		return sendBadRequest(c, errors.ErrInvalidProjectID)
+	}
+
+	project, err := h.projectService.UpdateProject(c.Context(), user, projectUUID, req)
 	if err != nil {
 		return sendBadRequest(c, err)
 	}

@@ -24,6 +24,12 @@ func (r *WorkflowRepository) Create(ctx context.Context, workflow *domain.Workfl
 	})
 }
 
+func (r *WorkflowRepository) Update(ctx context.Context, workflow *domain.Workflow) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		return tx.Model(workflow).Updates(workflow).Error
+	})
+}
+
 func (r *WorkflowRepository) FindAllByProjectID(ctx context.Context, projectID uuid.UUID, q dto.PaginateQuery) ([]domain.Workflow, int64, error) {
 	var workflows []domain.Workflow
 	var total int64
@@ -60,4 +66,18 @@ func (r *WorkflowRepository) FindAllByProjectID(ctx context.Context, projectID u
 	}
 
 	return workflows, total, nil
+}
+
+func (r *WorkflowRepository) FindByProjectIDAndWorkflowID(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID) (*domain.Workflow, error) {
+	var workflow domain.Workflow
+
+	err := r.db.WithContext(ctx).
+		Where("project_id = ? AND id = ?", projectID, workflowID).
+		First(&workflow).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &workflow, nil
 }

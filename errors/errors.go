@@ -20,4 +20,5 @@ var (
 	ErrUnexpectedSigningMethod = errors.New("unexpected signing method")
 	ErrInvalidToken            = errors.New("invalid token")
 	ErrValidationFailed        = errors.New("validation failed")
+	ErrInvalidWorkflowID       = errors.New("invalid workflow id")
 )

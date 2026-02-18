@@ -66,8 +66,8 @@ func (s *ProjectService) CreateProject(ctx context.Context, user *domain.User, i
 	return dto.NewProjectOutput(*project, user.ID), nil
 }
 
-func (s *ProjectService) UpdateProject(ctx context.Context, user *domain.User, input dto.UpdateProjectInput) (dto.ProjectOutput, error) {
-	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, user.ActiveProjectID, user.ID)
+func (s *ProjectService) UpdateProject(ctx context.Context, user *domain.User, projectID uuid.UUID, input dto.UpdateProjectInput) (dto.ProjectOutput, error) {
+	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, user.ID)
 	if err != nil {
 		return dto.ProjectOutput{}, errors.ErrProjectNotFound
 	}

@@ -18,6 +18,11 @@ type CreateWorkflowInput struct {
 	Description string `json:"description" validate:"required,min=2,max=255"`
 }
 
+type UpdateWorkflowInput struct {
+	Name        string `json:"name" validate:"required,min=2,max=255"`
+	Description string `json:"description" validate:"required,min=2,max=255"`
+}
+
 func NewWorkflowOutput(workflow domain.Workflow) WorkflowOutput {
 	return WorkflowOutput{
 		ID:          workflow.ID.String(),
