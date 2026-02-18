@@ -8,6 +8,7 @@ var (
 	ErrMaxProjectsReached      = errors.New("maximum number of projects reached")
 	ErrProjectNotFound         = errors.New("project not found")
 	ErrWorkflowsNotFound       = errors.New("workflows not found")
+	ErrWorkflowNotFound        = errors.New("workflow not found")
 	ErrEndpointsNotFound       = errors.New("endpoints not found")
 	ErrActiveProjectNotFound   = errors.New("active project not found")
 	ErrUserNotAuthenticated    = errors.New("user not authenticated")

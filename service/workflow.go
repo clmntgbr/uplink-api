@@ -41,7 +41,7 @@ func (s *WorkflowService) CreateWorkflow(ctx context.Context, projectID uuid.UUI
 func (s *WorkflowService) UpdateWorkflow(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateWorkflowInput) (dto.WorkflowOutput, error) {
 	workflow, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
 	if err != nil {
-		return dto.WorkflowOutput{}, err
+		return dto.WorkflowOutput{}, errors.ErrWorkflowNotFound
 	}
 
 	workflow.Name = req.Name
@@ -57,7 +57,7 @@ func (s *WorkflowService) UpdateWorkflow(ctx context.Context, projectID uuid.UUI
 func (s *WorkflowService) GetWorkflowByID(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID) (dto.WorkflowOutput, error) {
 	workflow, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
 	if err != nil {
-		return dto.WorkflowOutput{}, err
+		return dto.WorkflowOutput{}, errors.ErrWorkflowNotFound
 	}
 
 	return dto.NewWorkflowOutput(*workflow), nil
