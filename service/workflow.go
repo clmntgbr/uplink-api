@@ -25,14 +25,9 @@ func NewWorkflowService(workflowRepo *repository.WorkflowRepository, projectRepo
 }
 
 func (s *WorkflowService) CreateWorkflow(ctx context.Context, projectID uuid.UUID, req dto.CreateWorkflowInput) (dto.WorkflowOutput, error) {
-	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
-	if err != nil {
-		return dto.WorkflowOutput{}, errors.ErrProjectNotFound
-	}
-
 	workflow := &domain.Workflow{
 		Name:        req.Name,
-		ProjectID:   project.ID,
+		ProjectID:   projectID,
 		Description: req.Description,
 	}
 
@@ -44,12 +39,7 @@ func (s *WorkflowService) CreateWorkflow(ctx context.Context, projectID uuid.UUI
 }
 
 func (s *WorkflowService) GetWorkflows(ctx context.Context, projectID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
-	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
-	if err != nil {
-		return dto.PaginateResponse{}, errors.ErrProjectNotFound
-	}
-
-	workflows, total, err := s.workflowRepo.FindAllByProjectID(ctx, project.ID, query)
+	workflows, total, err := s.workflowRepo.FindAllByProjectID(ctx, projectID, query)
 	if err != nil {
 		return dto.PaginateResponse{}, errors.ErrWorkflowsNotFound
 	}

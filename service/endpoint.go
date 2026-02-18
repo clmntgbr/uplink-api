@@ -25,14 +25,9 @@ func NewEndpointService(endpointRepo *repository.EndpointRepository, projectRepo
 }
 
 func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUID, req dto.CreateEndpointInput) (dto.EndpointOutput, error) {
-	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
-	if err != nil {
-		return dto.EndpointOutput{}, errors.ErrProjectNotFound
-	}
-
 	endpoint := &domain.Endpoint{
 		Name:      req.Name,
-		ProjectID: project.ID,
+		ProjectID: projectID,
 		BaseURI:   req.BaseURI,
 		Path:      req.Path,
 		Method:    req.Method,
@@ -50,12 +45,7 @@ func (s *EndpointService) CreateEndpoint(ctx context.Context, projectID uuid.UUI
 }
 
 func (s *EndpointService) GetEndpoints(ctx context.Context, projectID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
-	project, err := s.projectRepo.FindByProjectID(ctx, projectID)
-	if err != nil {
-		return dto.PaginateResponse{}, errors.ErrProjectNotFound
-	}
-
-	endpoints, total, err := s.endpointRepo.FindAllByProjectID(ctx, project.ID, query)
+	endpoints, total, err := s.endpointRepo.FindAllByProjectID(ctx, projectID, query)
 	if err != nil {
 		return dto.PaginateResponse{}, errors.ErrEndpointsNotFound
 	}

@@ -50,12 +50,12 @@ func (r *ProjectRepository) FindAllByUserID(ctx context.Context, userID uuid.UUI
 	return projects, total, nil
 }
 
-func (r *ProjectRepository) FindByUserIDAndProjectID(ctx context.Context, projectID uuid.UUID, user *domain.User) (*domain.Project, error) {
+func (r *ProjectRepository) FindByUserIDAndProjectID(ctx context.Context, projectID uuid.UUID, userID uuid.UUID) (*domain.Project, error) {
 	var project domain.Project
 
 	err := r.db.WithContext(ctx).
 		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
-		Where("projects.id = ? AND user_projects.user_id = ?", projectID, user.ID).
+		Where("projects.id = ? AND user_projects.user_id = ?", projectID, userID).
 		First(&project).Error
 
 	if err != nil {

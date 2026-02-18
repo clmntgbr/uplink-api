@@ -41,14 +41,14 @@ func (s *ProjectService) GetProjects(ctx context.Context, userID uuid.UUID, quer
 }
 
 func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (dto.ProjectOutput, error) {
+	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, userID)
+	if err != nil {
+		return dto.ProjectOutput{}, errors.ErrProjectNotFound
+	}
+
 	user, err := s.userRepo.FindByID(userID)
 	if err != nil {
 		return dto.ProjectOutput{}, errors.ErrUserNotFound
-	}
-
-	project, err := s.projectRepo.FindByUserIDAndProjectID(ctx, projectID, user)
-	if err != nil {
-		return dto.ProjectOutput{}, errors.ErrProjectNotFound
 	}
 
 	output := dto.NewProjectOutput(*project, user.ActiveProjectID)
@@ -56,11 +56,6 @@ func (s *ProjectService) GetProjectByID(ctx context.Context, userID uuid.UUID, p
 }
 
 func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, input dto.CreateProjectInput) (dto.ProjectOutput, error) {
-	user, err := s.userRepo.FindByID(userID)
-	if err != nil {
-		return dto.ProjectOutput{}, errors.ErrUserNotFound
-	}
-
 	if err := s.projectRules.MaxProjectsPerUser(ctx, userID); err != nil {
 		return dto.ProjectOutput{}, err
 	}
@@ -69,7 +64,7 @@ func (s *ProjectService) CreateProject(ctx context.Context, userID uuid.UUID, in
 		Name: input.Name,
 		Users: []domain.User{
 			{
-				ID: user.ID,
+				ID: userID,
 			},
 		},
 	}
