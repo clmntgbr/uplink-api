@@ -27,7 +27,7 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 
 	var req dto.CreateEndpointInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), activeProjectID, req)

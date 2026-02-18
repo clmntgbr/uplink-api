@@ -74,7 +74,7 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 
 	var req dto.CreateProjectInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	project, err := h.projectService.CreateProject(c.Context(), user, req)
@@ -93,7 +93,7 @@ func (h *ProjectHandler) UpdateProject(c fiber.Ctx) error {
 
 	var req dto.UpdateProjectInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	project, err := h.projectService.UpdateProject(c.Context(), user, req)
@@ -112,7 +112,7 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 
 	var req dto.ActivateProjectInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	projectUUID, err := uuid.Parse(req.ProjectID)

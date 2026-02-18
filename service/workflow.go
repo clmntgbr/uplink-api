@@ -44,5 +44,6 @@ func (s *WorkflowService) GetWorkflows(ctx context.Context, projectID uuid.UUID,
 		return dto.PaginateResponse{}, errors.ErrWorkflowsNotFound
 	}
 
-	return dto.NewPaginateResponse(workflows, int(total), query), nil
+	outputs := dto.NewWorkflowsOutput(workflows)
+	return dto.NewPaginateResponse(outputs, int(total), query), nil
 }

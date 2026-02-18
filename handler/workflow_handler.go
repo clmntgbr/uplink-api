@@ -27,7 +27,7 @@ func (h *WorkflowHandler) CreateWorkflow(c fiber.Ctx) error {
 
 	var req dto.CreateWorkflowInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	workflow, err := h.workflowService.CreateWorkflow(c.Context(), activeProjectID, req)

@@ -20,7 +20,7 @@ func NewAuthenticateHandler(authService *service.AuthenticateService) *Authentic
 func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 	var req dto.LoginInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	loginOutput, err := h.authenticateService.Login(req)
@@ -34,7 +34,7 @@ func (h *AuthenticateHandler) Login(c fiber.Ctx) error {
 func (h *AuthenticateHandler) Register(c fiber.Ctx) error {
 	var req dto.RegisterInput
 	if err := bindAndValidate(c, &req); err != nil {
-		return err
+		return nil
 	}
 
 	registerOutput, err := h.authenticateService.Register(c, req)

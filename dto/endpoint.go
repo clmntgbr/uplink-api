@@ -1,21 +1,24 @@
 package dto
 
 import (
+	"time"
 	"uplink-api/domain"
 
 	"gorm.io/datatypes"
 )
 
 type EndpointOutput struct {
-	ID      string         `json:"id"`
-	Name    string         `json:"name"`
-	BaseURI string         `json:"baseUri"`
-	Path    string         `json:"path"`
-	Method  string         `json:"method"`
-	Timeout int            `json:"timeout"`
-	Header  datatypes.JSON `json:"header"`
-	Body    datatypes.JSON `json:"body"`
-	Query   datatypes.JSON `json:"query"`
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	BaseURI   string         `json:"baseUri"`
+	Path      string         `json:"path"`
+	Method    string         `json:"method"`
+	Timeout   int            `json:"timeout"`
+	Header    datatypes.JSON `json:"header"`
+	Body      datatypes.JSON `json:"body"`
+	Query     datatypes.JSON `json:"query"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
 }
 
 type CreateEndpointInput struct {
@@ -31,15 +34,17 @@ type CreateEndpointInput struct {
 
 func NewEndpointOutput(endpoint domain.Endpoint) EndpointOutput {
 	return EndpointOutput{
-		ID:      endpoint.ID.String(),
-		Name:    endpoint.Name,
-		BaseURI: endpoint.BaseURI,
-		Path:    endpoint.Path,
-		Method:  endpoint.Method,
-		Timeout: endpoint.Timeout,
-		Header:  endpoint.Header,
-		Body:    endpoint.Body,
-		Query:   endpoint.Query,
+		ID:        endpoint.ID.String(),
+		Name:      endpoint.Name,
+		BaseURI:   endpoint.BaseURI,
+		Path:      endpoint.Path,
+		Method:    endpoint.Method,
+		Timeout:   endpoint.Timeout,
+		Header:    endpoint.Header,
+		Body:      endpoint.Body,
+		Query:     endpoint.Query,
+		CreatedAt: endpoint.CreatedAt,
+		UpdatedAt: endpoint.UpdatedAt,
 	}
 }
 

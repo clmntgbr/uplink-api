@@ -19,4 +19,5 @@ var (
 	ErrUserAlreadyExists       = errors.New("user already exists")
 	ErrUnexpectedSigningMethod = errors.New("unexpected signing method")
 	ErrInvalidToken            = errors.New("invalid token")
+	ErrValidationFailed        = errors.New("validation failed")
 )

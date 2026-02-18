@@ -9,16 +9,18 @@ import (
 
 func bindAndValidate(c fiber.Ctx, req interface{}) error {
 	if err := c.Bind().JSON(req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": errors.ErrInvalidRequestBody.Error(),
 		})
+		return errors.ErrValidationFailed
 	}
 
 	if err := validator.ValidateStruct(req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": errors.ErrInvalidRequestBody.Error(),
 			"errors":  validator.FormatValidationErrors(err),
 		})
+		return errors.ErrValidationFailed
 	}
 
 	return nil
