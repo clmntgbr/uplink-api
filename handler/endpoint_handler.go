@@ -20,7 +20,7 @@ func NewEndpointHandler(endpointService *service.EndpointService) *EndpointHandl
 }
 
 func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
-	activeProjectID, err := ctxutil.GetActiveProjectID(c)
+	activeProject, err := ctxutil.GetActiveProject(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -30,7 +30,7 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 		return nil
 	}
 
-	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), activeProjectID, req)
+	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), activeProject.ID, req)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
@@ -39,7 +39,7 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 }
 
 func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
-	activeProjectID, err := ctxutil.GetActiveProjectID(c)
+	activeProject, err := ctxutil.GetActiveProject(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -51,7 +51,7 @@ func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 
 	query.Normalize()
 
-	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProjectID, query)
+	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProject.ID, query)
 	if err != nil {
 		return sendInternalError(c, err)
 	}

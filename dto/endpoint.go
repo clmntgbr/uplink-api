@@ -25,7 +25,7 @@ type CreateEndpointInput struct {
 	Name    string         `json:"name" validate:"required,min=2,max=255"`
 	BaseURI string         `json:"baseUri" validate:"required,url"`
 	Path    string         `json:"path" validate:"required"`
-	Method  string         `json:"method" validate:"required,containsany=GET,POST,PUT,DELETE,PATCH,HEAD,OPTIONS"`
+	Method  string         `json:"method" validate:"required"`
 	Timeout int            `json:"timeout" validate:"required,min=1,max=300000,number"`
 	Header  datatypes.JSON `json:"header" validate:"required,json"`
 	Body    datatypes.JSON `json:"body" validate:"required,json"`

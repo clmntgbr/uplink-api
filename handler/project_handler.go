@@ -130,12 +130,14 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
-	activated, err := h.projectService.ActivateProject(c.Context(), user.ID, projectUUID)
+	project, err := h.projectService.ActivateProject(c.Context(), user.ID, projectUUID)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
 
+	ctxutil.SetActiveProject(c, project)
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"activated": activated,
+		"activated": true,
 	})
 }

@@ -83,7 +83,7 @@ func (r *ProjectRepository) FindByProjectID(ctx context.Context, projectID uuid.
 	return &project, nil
 }
 
-func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) error {
+func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (*domain.Project, error) {
 	var project domain.Project
 	err := r.db.WithContext(ctx).
 		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
@@ -91,13 +91,19 @@ func (r *ProjectRepository) ActivateProject(ctx context.Context, userID uuid.UUI
 		First(&project).Error
 
 	if err != nil {
-		return errors.ErrProjectNotFound
+		return nil, errors.ErrProjectNotFound
 	}
 
-	return r.db.WithContext(ctx).
+	err = r.db.WithContext(ctx).
 		Model(&domain.User{}).
 		Where("id = ?", userID).
 		Update("active_project_id", projectID).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &project, nil
 }
 
 func (r *ProjectRepository) CountProjectsByUserID(ctx context.Context, userID uuid.UUID) (int64, error) {

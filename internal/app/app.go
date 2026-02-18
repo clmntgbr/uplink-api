@@ -38,6 +38,7 @@ func New(cfg *config.Config) *App {
 	router.Setup(app, router.Dependencies{
 		AuthenticateService: authenticateService,
 		UserRepo:            userRepo,
+		ProjectRepo:         projectRepo,
 		UserService:         userService,
 		ProjectService:      projectService,
 		EndpointService:     endpointService,

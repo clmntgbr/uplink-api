@@ -14,12 +14,14 @@ import (
 type AuthenticateMiddleware struct {
 	authenticateService *service.AuthenticateService
 	userRepo            *repository.UserRepository
+	projectRepo         *repository.ProjectRepository
 }
 
-func NewAuthenticateMiddleware(authService *service.AuthenticateService, userRepo *repository.UserRepository) *AuthenticateMiddleware {
+func NewAuthenticateMiddleware(authService *service.AuthenticateService, userRepo *repository.UserRepository, projectRepo *repository.ProjectRepository) *AuthenticateMiddleware {
 	return &AuthenticateMiddleware{
 		authenticateService: authService,
 		userRepo:            userRepo,
+		projectRepo:         projectRepo,
 	}
 }
 
@@ -95,8 +97,15 @@ func (m *AuthenticateMiddleware) Protected() fiber.Handler {
 			})
 		}
 
+		project, err := m.projectRepo.FindByProjectID(c.Context(), user.ActiveProjectID)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Project not found",
+			})
+		}
+
 		c.Locals(ctxutil.UserKey, user)
-		c.Locals(ctxutil.ActiveProjectIDKey, user.ActiveProjectID)
+		c.Locals(ctxutil.ActiveProjectKey, project)
 
 		return c.Next()
 	}

@@ -80,11 +80,11 @@ func (s *ProjectService) UpdateProject(ctx context.Context, user *domain.User, p
 	return dto.NewProjectOutput(*project, user.ActiveProjectID), nil
 }
 
-func (s *ProjectService) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (bool, error) {
-	err := s.projectRepo.ActivateProject(ctx, userID, projectID)
+func (s *ProjectService) ActivateProject(ctx context.Context, userID uuid.UUID, projectID uuid.UUID) (domain.Project, error) {
+	project, err := s.projectRepo.ActivateProject(ctx, userID, projectID)
 	if err != nil {
-		return false, err
+		return domain.Project{}, err
 	}
 
-	return true, nil
+	return *project, nil
 }

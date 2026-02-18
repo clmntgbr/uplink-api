@@ -15,6 +15,7 @@ import (
 type Dependencies struct {
 	AuthenticateService *service.AuthenticateService
 	UserRepo            *repository.UserRepository
+	ProjectRepo         *repository.ProjectRepository
 	UserService         *service.UserService
 	ProjectService      *service.ProjectService
 	EndpointService     *service.EndpointService
@@ -34,7 +35,7 @@ func Setup(app *fiber.App, deps Dependencies) {
 func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	api := app.Group("/api")
 
-	authenticateMiddleware := middleware.NewAuthenticateMiddleware(deps.AuthenticateService, deps.UserRepo)
+	authenticateMiddleware := middleware.NewAuthenticateMiddleware(deps.AuthenticateService, deps.UserRepo, deps.ProjectRepo)
 
 	setupAuthRoutes(api, deps)
 

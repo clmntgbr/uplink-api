@@ -21,7 +21,7 @@ func NewWorkflowHandler(workflowService *service.WorkflowService) *WorkflowHandl
 }
 
 func (h *WorkflowHandler) CreateWorkflow(c fiber.Ctx) error {
-	activeProjectID, err := ctxutil.GetActiveProjectID(c)
+	activeProject, err := ctxutil.GetActiveProject(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -31,7 +31,7 @@ func (h *WorkflowHandler) CreateWorkflow(c fiber.Ctx) error {
 		return nil
 	}
 
-	workflow, err := h.workflowService.CreateWorkflow(c.Context(), activeProjectID, req)
+	workflow, err := h.workflowService.CreateWorkflow(c.Context(), activeProject.ID, req)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
@@ -55,12 +55,12 @@ func (h *WorkflowHandler) UpdateWorkflow(c fiber.Ctx) error {
 		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
 	}
 
-	projectUUID, err := ctxutil.GetActiveProjectID(c)
+	activeProject, err := ctxutil.GetActiveProject(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
 
-	workflow, err := h.workflowService.UpdateWorkflow(c.Context(), projectUUID, workflowUUID, req)
+	workflow, err := h.workflowService.UpdateWorkflow(c.Context(), activeProject.ID, workflowUUID, req)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
@@ -79,12 +79,12 @@ func (h *WorkflowHandler) GetWorkflowByID(c fiber.Ctx) error {
 		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
 	}
 
-	projectUUID, err := ctxutil.GetActiveProjectID(c)
+	project, err := ctxutil.GetActiveProject(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
 
-	workflow, err := h.workflowService.GetWorkflowByID(c.Context(), projectUUID, workflowUUID)
+	workflow, err := h.workflowService.GetWorkflowByID(c.Context(), project.ID, workflowUUID)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
@@ -93,7 +93,7 @@ func (h *WorkflowHandler) GetWorkflowByID(c fiber.Ctx) error {
 }
 
 func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
-	activeProjectID, err := ctxutil.GetActiveProjectID(c)
+	activeProject, err := ctxutil.GetActiveProject(c)
 	if err != nil {
 		return sendUnauthorized(c)
 	}
@@ -105,7 +105,7 @@ func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
 
 	query.Normalize()
 
-	workflows, err := h.workflowService.GetWorkflows(c.Context(), activeProjectID, query)
+	workflows, err := h.workflowService.GetWorkflows(c.Context(), activeProject.ID, query)
 	if err != nil {
 		return sendInternalError(c, err)
 	}
