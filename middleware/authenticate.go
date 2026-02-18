@@ -104,8 +104,8 @@ func (m *AuthenticateMiddleware) Protected() fiber.Handler {
 			})
 		}
 
-		c.Locals(ctxutil.UserKey, user)
-		c.Locals(ctxutil.ActiveProjectKey, project)
+		ctxutil.SetUser(c, *user)
+		ctxutil.SetActiveProject(c, *project)
 
 		return c.Next()
 	}

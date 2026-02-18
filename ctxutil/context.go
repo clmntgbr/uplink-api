@@ -20,6 +20,10 @@ func GetUser(c fiber.Ctx) (*domain.User, error) {
 	return user, nil
 }
 
+func SetUser(c fiber.Ctx, user domain.User) {
+	c.Locals(UserKey, &user)
+}
+
 func GetActiveProject(c fiber.Ctx) (*domain.Project, error) {
 	project, ok := c.Locals(ActiveProjectKey).(*domain.Project)
 	if !ok {
@@ -29,5 +33,5 @@ func GetActiveProject(c fiber.Ctx) (*domain.Project, error) {
 }
 
 func SetActiveProject(c fiber.Ctx, project domain.Project) {
-	c.Locals(ActiveProjectKey, project)
+	c.Locals(ActiveProjectKey, &project)
 }
