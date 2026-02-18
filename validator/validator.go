@@ -30,7 +30,7 @@ func formatValidationErrors(err error) map[string]string {
 			case "email":
 				errors[field] = field + " must be a valid email"
 			default:
-				errors[field] = field + " is invalid"
+				errors[field] = field + " is invalid (" + e.Tag() + ") (" + e.Param() + ")"
 			}
 		}
 	}
