@@ -33,7 +33,7 @@ func (h *WorkflowHandler) CreateWorkflow(c fiber.Ctx) error {
 
 	workflow, err := h.workflowService.CreateWorkflow(c.Context(), activeProject.ID, req)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(workflow)
@@ -62,7 +62,7 @@ func (h *WorkflowHandler) UpdateWorkflow(c fiber.Ctx) error {
 
 	workflow, err := h.workflowService.UpdateWorkflow(c.Context(), activeProject.ID, workflowUUID, req)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(workflow)
@@ -86,7 +86,7 @@ func (h *WorkflowHandler) GetWorkflowByID(c fiber.Ctx) error {
 
 	workflow, err := h.workflowService.GetWorkflowByID(c.Context(), project.ID, workflowUUID)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(workflow)
@@ -107,7 +107,7 @@ func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
 
 	workflows, err := h.workflowService.GetWorkflows(c.Context(), activeProject.ID, query)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(workflows)

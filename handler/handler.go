@@ -43,3 +43,22 @@ func sendBadRequest(c fiber.Ctx, message error) error {
 		"message": message.Error(),
 	})
 }
+
+func sendNotFound(c fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		"message": err.Error(),
+	})
+}
+
+func handleError(c fiber.Ctx, err error) error {
+	switch err {
+	case errors.ErrWorkflowNotFound, errors.ErrProjectNotFound, errors.ErrUserNotFound:
+		return sendNotFound(c, err)
+	case errors.ErrUserNotAuthenticated:
+		return sendUnauthorized(c)
+	case errors.ErrInvalidWorkflowID, errors.ErrInvalidProjectID, errors.ErrInvalidQueryParams, errors.ErrInvalidRequestBody:
+		return sendBadRequest(c, err)
+	default:
+		return sendInternalError(c, err)
+	}
+}
