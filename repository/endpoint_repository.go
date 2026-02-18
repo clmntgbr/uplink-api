@@ -26,7 +26,6 @@ func (r *EndpointRepository) Create(ctx context.Context, endpoint *domain.Endpoi
 
 func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID uuid.UUID, q dto.PaginateQuery) ([]domain.Endpoint, int64, error) {
 	var endpoints []domain.Endpoint
-	var total int64
 
 	db := r.db.WithContext(ctx).Model(&domain.Endpoint{}).
 		Where("project_id = ?", projectID)
@@ -35,26 +34,12 @@ func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID u
 		db = db.Where("name ILIKE ?", "%"+q.Search+"%")
 	}
 
-	if err := db.Count(&total).Error; err != nil {
+	db, total, err := Paginate(db, q)
+	if err != nil {
 		return nil, 0, err
 	}
 
-	sortBy := dto.OrderByAsc
-	if q.SortBy != "" {
-		sortBy = q.SortBy
-	}
-
-	orderBy := dto.OrderByDesc
-	if q.OrderBy == dto.OrderByAsc {
-		orderBy = dto.OrderByAsc
-	}
-
-	err := db.
-		Order(sortBy + " " + orderBy).
-		Limit(q.Limit).
-		Offset(q.Offset()).
-		Find(&endpoints).Error
-
+	err = db.Find(&endpoints).Error
 	if err != nil {
 		return nil, 0, err
 	}

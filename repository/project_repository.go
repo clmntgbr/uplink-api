@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"uplink-api/dto"
 	"uplink-api/errors"
 
 	"uplink-api/domain"
@@ -24,19 +25,31 @@ func (r *ProjectRepository) Create(ctx context.Context, project *domain.Project)
 	})
 }
 
-func (r *ProjectRepository) FindAllByUserID(ctx context.Context, user *domain.User) ([]domain.Project, error) {
+func (r *ProjectRepository) FindAllByUserID(ctx context.Context, user *domain.User, q dto.PaginateQuery) ([]domain.Project, int64, error) {
 	var projects []domain.Project
 
-	err := r.db.WithContext(ctx).
+	db := r.db.WithContext(ctx)
+
+	err := db.WithContext(ctx).
 		Joins("JOIN user_projects ON user_projects.project_id = projects.id").
 		Where("user_projects.user_id = ?", user.ID).
 		Find(&projects).Error
 
-	if err != nil {
-		return nil, err
+	if q.Search != "" {
+		db = db.Where("name ILIKE ?", "%"+q.Search+"%")
 	}
 
-	return projects, nil
+	db, total, err := Paginate(db, q)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	err = db.Find(&projects).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return projects, total, nil
 }
 
 func (r *ProjectRepository) FindByUserIDAndProjectID(ctx context.Context, projectID uuid.UUID, user *domain.User) (*domain.Project, error) {

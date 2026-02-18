@@ -2,7 +2,7 @@ package dto
 
 import "math"
 
-var (
+const (
 	OrderByAsc  = "asc"
 	OrderByDesc = "desc"
 )

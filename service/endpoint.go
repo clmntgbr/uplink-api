@@ -60,5 +60,6 @@ func (s *EndpointService) GetEndpoints(ctx context.Context, projectID uuid.UUID,
 		return dto.PaginateResponse{}, errors.ErrEndpointsNotFound
 	}
 
-	return dto.NewPaginateResponse(endpoints, int(total), query), nil
+	outputs := dto.NewEndpointsOutput(endpoints)
+	return dto.NewPaginateResponse(outputs, int(total), query), nil
 }
