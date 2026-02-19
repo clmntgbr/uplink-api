@@ -16,6 +16,7 @@ type Dependencies struct {
 	AuthenticateService *service.AuthenticateService
 	UserRepo            *repository.UserRepository
 	ProjectRepo         *repository.ProjectRepository
+	StepRepo            *repository.StepRepository
 	UserService         *service.UserService
 	ProjectService      *service.ProjectService
 	EndpointService     *service.EndpointService
@@ -92,4 +93,5 @@ func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {
 	api.Post("/workflows", workflowHandler.CreateWorkflow)
 	api.Put("/workflows/:id", workflowHandler.UpdateWorkflow)
 	api.Get("/workflows/:id", workflowHandler.GetWorkflowByID)
+	api.Get("/workflows/:id/steps", workflowHandler.GetStepsByWorkflowID)
 }
