@@ -94,4 +94,5 @@ func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {
 	api.Put("/workflows/:id", workflowHandler.UpdateWorkflow)
 	api.Get("/workflows/:id", workflowHandler.GetWorkflowByID)
 	api.Get("/workflows/:id/steps", workflowHandler.GetStepsByWorkflowID)
+	api.Post("/workflows/:id/steps", workflowHandler.CreateStepByWorkflowID)
 }
