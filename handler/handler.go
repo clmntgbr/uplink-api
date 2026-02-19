@@ -52,7 +52,7 @@ func sendNotFound(c fiber.Ctx, err error) error {
 
 func handleError(c fiber.Ctx, err error) error {
 	switch err {
-	case errors.ErrWorkflowNotFound, errors.ErrProjectNotFound, errors.ErrUserNotFound:
+	case errors.ErrWorkflowNotFound, errors.ErrProjectNotFound, errors.ErrUserNotFound, errors.ErrEndpointNotFound:
 		return sendNotFound(c, err)
 	case errors.ErrUserNotAuthenticated:
 		return sendUnauthorized(c)

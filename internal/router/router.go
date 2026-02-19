@@ -81,6 +81,8 @@ func setupEndpointRoutes(api fiber.Router, deps Dependencies) {
 
 	api.Get("/endpoints", endpointHandler.GetEndpoints)
 	api.Post("/endpoints", endpointHandler.CreateEndpoint)
+	api.Get("/endpoints/:id", endpointHandler.GetEndpointByID)
+	api.Put("/endpoints/:id", endpointHandler.UpdateEndpoint)
 }
 
 func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {

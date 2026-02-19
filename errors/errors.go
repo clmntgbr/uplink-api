@@ -10,6 +10,7 @@ var (
 	ErrWorkflowsNotFound       = errors.New("workflows not found")
 	ErrWorkflowNotFound        = errors.New("workflow not found")
 	ErrEndpointsNotFound       = errors.New("endpoints not found")
+	ErrEndpointNotFound        = errors.New("endpoint not found")
 	ErrActiveProjectNotFound   = errors.New("active project not found")
 	ErrUserNotAuthenticated    = errors.New("user not authenticated")
 	ErrInvalidCredentials      = errors.New("invalid credentials")
@@ -22,4 +23,5 @@ var (
 	ErrInvalidToken            = errors.New("invalid token")
 	ErrValidationFailed        = errors.New("validation failed")
 	ErrInvalidWorkflowID       = errors.New("invalid workflow id")
+	ErrInvalidEndpointID       = errors.New("invalid endpoint id")
 )

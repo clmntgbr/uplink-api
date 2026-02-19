@@ -24,6 +24,12 @@ func (r *EndpointRepository) Create(ctx context.Context, endpoint *domain.Endpoi
 	})
 }
 
+func (r *EndpointRepository) Update(ctx context.Context, endpoint *domain.Endpoint) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		return tx.Model(endpoint).Updates(endpoint).Error
+	})
+}
+
 func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID uuid.UUID, q dto.PaginateQuery) ([]domain.Endpoint, int64, error) {
 	var endpoints []domain.Endpoint
 
@@ -45,4 +51,15 @@ func (r *EndpointRepository) FindAllByProjectID(ctx context.Context, projectID u
 	}
 
 	return endpoints, total, nil
+}
+
+func (r *EndpointRepository) FindByProjectIDAndEndpointID(ctx context.Context, projectID uuid.UUID, endpointID uuid.UUID) (domain.Endpoint, error) {
+	var endpoint domain.Endpoint
+	err := r.db.WithContext(ctx).
+		Where("project_id = ? AND id = ?", projectID, endpointID).
+		First(&endpoint).Error
+	if err != nil {
+		return domain.Endpoint{}, err
+	}
+	return endpoint, nil
 }

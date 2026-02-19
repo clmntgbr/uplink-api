@@ -32,6 +32,17 @@ type CreateEndpointInput struct {
 	Query   datatypes.JSON `json:"query" validate:"required,json"`
 }
 
+type UpdateEndpointInput struct {
+	Name    string         `json:"name" validate:"required,min=2,max=255"`
+	BaseURI string         `json:"baseUri" validate:"required,url"`
+	Path    string         `json:"path" validate:"required"`
+	Method  string         `json:"method" validate:"required"`
+	Timeout int            `json:"timeout" validate:"required,min=1,max=300000,number"`
+	Header  datatypes.JSON `json:"header" validate:"required,json"`
+	Body    datatypes.JSON `json:"body" validate:"required,json"`
+	Query   datatypes.JSON `json:"query" validate:"required,json"`
+}
+
 func NewEndpointOutput(endpoint domain.Endpoint) EndpointOutput {
 	return EndpointOutput{
 		ID:        endpoint.ID.String(),
