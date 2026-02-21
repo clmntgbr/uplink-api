@@ -12,11 +12,13 @@ import (
 
 type WorkflowHandler struct {
 	workflowService *service.WorkflowService
+	stepService     *service.StepService
 }
 
-func NewWorkflowHandler(workflowService *service.WorkflowService) *WorkflowHandler {
+func NewWorkflowHandler(workflowService *service.WorkflowService, stepService *service.StepService) *WorkflowHandler {
 	return &WorkflowHandler{
 		workflowService: workflowService,
+		stepService:     stepService,
 	}
 }
 
@@ -136,7 +138,7 @@ func (h *WorkflowHandler) GetStepsByWorkflowID(c fiber.Ctx) error {
 
 	query.Normalize()
 
-	steps, err := h.workflowService.GetStepsByWorkflowID(c.Context(), project.ID, workflowUUID, query)
+	steps, err := h.stepService.GetStepsByWorkflowID(c.Context(), project.ID, workflowUUID, query)
 	if err != nil {
 		return handleError(c, err)
 	}
@@ -165,7 +167,7 @@ func (h *WorkflowHandler) CreateStepByWorkflowID(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	step, err := h.workflowService.CreateStepByWorkflowID(c.Context(), activeProject.ID, workflowUUID, req)
+	step, err := h.stepService.CreateStepByWorkflowID(c.Context(), activeProject.ID, workflowUUID, req)
 	if err != nil {
 		return handleError(c, err)
 	}

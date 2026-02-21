@@ -12,19 +12,11 @@ import (
 
 type WorkflowService struct {
 	workflowRepo *repository.WorkflowRepository
-	projectRepo  *repository.ProjectRepository
-	userRepo     *repository.UserRepository
-	stepRepo     *repository.StepRepository
-	endpointRepo *repository.EndpointRepository
 }
 
-func NewWorkflowService(workflowRepo *repository.WorkflowRepository, projectRepo *repository.ProjectRepository, userRepo *repository.UserRepository, stepRepo *repository.StepRepository, endpointRepo *repository.EndpointRepository) *WorkflowService {
+func NewWorkflowService(workflowRepo *repository.WorkflowRepository) *WorkflowService {
 	return &WorkflowService{
 		workflowRepo: workflowRepo,
-		projectRepo:  projectRepo,
-		userRepo:     userRepo,
-		stepRepo:     stepRepo,
-		endpointRepo: endpointRepo,
 	}
 }
 
@@ -75,48 +67,4 @@ func (s *WorkflowService) GetWorkflows(ctx context.Context, projectID uuid.UUID,
 
 	outputs := dto.NewWorkflowsOutput(workflows)
 	return dto.NewPaginateResponse(outputs, int(total), query), nil
-}
-
-func (s *WorkflowService) GetStepsByWorkflowID(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, query dto.PaginateQuery) (dto.PaginateResponse, error) {
-	_, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
-	if err != nil {
-		return dto.PaginateResponse{}, errors.ErrWorkflowNotFound
-	}
-
-	steps, total, err := s.stepRepo.FindAllByWorkflowID(ctx, workflowID, query)
-	if err != nil {
-		return dto.PaginateResponse{}, nil
-	}
-
-	outputs := dto.NewStepsOutput(steps)
-	return dto.NewPaginateResponse(outputs, int(total), query), nil
-}
-
-func (s *WorkflowService) CreateStepByWorkflowID(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.CreateStepInput) (dto.StepOutput, error) {
-	_, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
-	if err != nil {
-		return dto.StepOutput{}, errors.ErrWorkflowNotFound
-	}
-
-	endpointID, err := uuid.Parse(req.EndpointID)
-	if err != nil {
-		return dto.StepOutput{}, errors.ErrInvalidEndpointID
-	}
-
-	endpoint, err := s.endpointRepo.FindByProjectIDAndEndpointID(ctx, projectID, endpointID)
-	if err != nil {
-		return dto.StepOutput{}, errors.ErrEndpointNotFound
-	}
-
-	step := &domain.Step{
-		WorkflowID: workflowID,
-		Position:   req.Position,
-		EndpointID: endpoint.ID,
-	}
-
-	if err := s.stepRepo.Create(ctx, step); err != nil {
-		return dto.StepOutput{}, err
-	}
-
-	return dto.NewStepOutput(*step), nil
 }
