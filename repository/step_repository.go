@@ -56,6 +56,7 @@ func (r *StepRepository) FindAllByWorkflowID(ctx context.Context, workflowID uui
 	}
 
 	err := db.
+		Preload("Endpoint").
 		Order(sortBy + " " + orderBy).
 		Limit(q.Limit).
 		Offset(q.Offset()).

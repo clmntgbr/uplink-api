@@ -3,12 +3,16 @@ package dto
 import (
 	"time"
 	"uplink-api/domain"
+
+	"github.com/google/uuid"
 )
 
 type StepOutput struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	ID        string          `json:"id"`
+	Position  int             `json:"position"`
+	Endpoint  *EndpointOutput `json:"endpoint"`
+	CreatedAt time.Time       `json:"createdAt"`
+	UpdatedAt time.Time       `json:"updatedAt"`
 }
 
 type CreateStepInput struct {
@@ -17,8 +21,16 @@ type CreateStepInput struct {
 }
 
 func NewStepOutput(step domain.Step) StepOutput {
+	var endpoint *EndpointOutput
+	if step.Endpoint.ID != uuid.Nil {
+		endpointOutput := NewEndpointOutput(step.Endpoint)
+		endpoint = &endpointOutput
+	}
+
 	return StepOutput{
 		ID:        step.ID.String(),
+		Position:  step.Position,
+		Endpoint:  endpoint,
 		CreatedAt: step.CreatedAt,
 		UpdatedAt: step.UpdatedAt,
 	}

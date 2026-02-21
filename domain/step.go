@@ -13,6 +13,8 @@ type Step struct {
 	EndpointID uuid.UUID `gorm:"type:uuid;not null" json:"endpoint_id"`
 	WorkflowID uuid.UUID `gorm:"type:uuid;not null" json:"workflow_id"`
 
+	Endpoint Endpoint `gorm:"foreignKey:EndpointID" json:"endpoint"`
+
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }
