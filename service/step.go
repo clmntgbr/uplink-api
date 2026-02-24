@@ -74,18 +74,18 @@ func (s *StepService) UpdateStepPosition(ctx context.Context, projectID uuid.UUI
 		return errors.ErrWorkflowNotFound
 	}
 
-	for _, step := range req.Steps {
-		stepID, err := uuid.Parse(step.StepID)
+	for _, item := range req.Steps {
+		itemID, err := uuid.Parse(item.StepID)
 		if err != nil {
 			return errors.ErrInvalidStepID
 		}
 
-		step, err := s.stepRepo.FindByWorkflowIDAndStepID(ctx, workflowID, stepID)
+		step, err := s.stepRepo.FindByWorkflowIDAndStepID(ctx, workflowID, itemID)
 		if err != nil {
 			return errors.ErrStepNotFound
 		}
 
-		step.Position = step.Position
+		step.Position = item.Position
 		if err := s.stepRepo.Update(ctx, &step); err != nil {
 			return err
 		}

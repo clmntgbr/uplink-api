@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
 	"uplink-api/errors"
@@ -177,13 +176,10 @@ func (h *WorkflowHandler) CreateStepByWorkflowID(c fiber.Ctx) error {
 }
 
 func (h *WorkflowHandler) UpdateStepPosition(c fiber.Ctx) error {
-	log.Println("UpdateStepPosition")
 	var req dto.UpdateStepPositionInput
-	// if err := bindAndValidate(c, &req); err != nil {
-	// 	return nil
-	// }
-
-	log.Println(req)
+	if err := bindAndValidate(c, &req); err != nil {
+		return nil
+	}
 
 	workflowID := c.Params("id")
 	if workflowID == "" {

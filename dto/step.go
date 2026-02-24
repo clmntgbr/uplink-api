@@ -25,8 +25,9 @@ type UpdateStepPositionInput struct {
 }
 
 type StepPosition struct {
-	StepID   string `json:"stepId" validate:"required,uuid"`
-	Position int    `json:"position" validate:"required,min=1,max=1000,number"`
+	StepID       string `json:"stepId" validate:"required,uuid"`
+	EndpointName string `json:"endpointName" validate:"required,min=2,max=255"`
+	Position     int    `json:"position" validate:"required,min=1,max=1000,number"`
 }
 
 func NewStepOutput(step domain.Step) StepOutput {
