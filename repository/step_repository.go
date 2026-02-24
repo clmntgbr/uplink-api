@@ -78,3 +78,12 @@ func (r *StepRepository) FindByWorkflowIDAndStepID(ctx context.Context, workflow
 	}
 	return step, nil
 }
+
+func (r *StepRepository) CountByWorkflowID(ctx context.Context, workflowID uuid.UUID) (int64, error) {
+	var count int64
+	err := r.db.WithContext(ctx).
+		Model(&domain.Step{}).
+		Where("workflow_id = ?", workflowID).
+		Count(&count).Error
+	return count, err
+}

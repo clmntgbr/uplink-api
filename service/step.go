@@ -55,9 +55,14 @@ func (s *StepService) CreateStepByWorkflowID(ctx context.Context, projectID uuid
 		return dto.StepOutput{}, errors.ErrEndpointNotFound
 	}
 
+	count, err := s.stepRepo.CountByWorkflowID(ctx, workflowID)
+	if err != nil {
+		return dto.StepOutput{}, err
+	}
+
 	step := &domain.Step{
 		WorkflowID: workflowID,
-		Position:   req.Position,
+		Position:   int(count + 1),
 		EndpointID: endpoint.ID,
 	}
 
