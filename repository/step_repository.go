@@ -45,14 +45,14 @@ func (r *StepRepository) FindAllByWorkflowID(ctx context.Context, workflowID uui
 		return nil, 0, err
 	}
 
-	sortBy := "created_at"
+	sortBy := "position"
 	if q.SortBy != "" {
 		sortBy = q.SortBy
 	}
 
-	orderBy := "desc"
-	if q.OrderBy == "asc" {
-		orderBy = "asc"
+	orderBy := "asc"
+	if q.OrderBy == "desc" {
+		orderBy = "desc"
 	}
 
 	err := db.
