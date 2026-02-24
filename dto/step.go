@@ -20,6 +20,15 @@ type CreateStepInput struct {
 	EndpointID string `json:"endpointId" validate:"required,uuid"`
 }
 
+type UpdateStepPositionInput struct {
+	Steps []StepPosition `json:"steps" validate:"required,min=1,max=1000,dive"`
+}
+
+type StepPosition struct {
+	StepID   string `json:"stepId" validate:"required,uuid"`
+	Position int    `json:"position" validate:"required,min=1,max=1000,number"`
+}
+
 func NewStepOutput(step domain.Step) StepOutput {
 	var endpoint *EndpointOutput
 	if step.Endpoint.ID != uuid.Nil {

@@ -67,3 +67,14 @@ func (r *StepRepository) FindAllByWorkflowID(ctx context.Context, workflowID uui
 	}
 	return steps, total, nil
 }
+
+func (r *StepRepository) FindByWorkflowIDAndStepID(ctx context.Context, workflowID uuid.UUID, stepID uuid.UUID) (domain.Step, error) {
+	var step domain.Step
+	err := r.db.WithContext(ctx).
+		Where("workflow_id = ? AND id = ?", workflowID, stepID).
+		First(&step).Error
+	if err != nil {
+		return domain.Step{}, err
+	}
+	return step, nil
+}

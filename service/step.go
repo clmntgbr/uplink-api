@@ -67,3 +67,29 @@ func (s *StepService) CreateStepByWorkflowID(ctx context.Context, projectID uuid
 
 	return dto.NewStepOutput(*step), nil
 }
+
+func (s *StepService) UpdateStepPosition(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateStepPositionInput) error {
+	_, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
+	if err != nil {
+		return errors.ErrWorkflowNotFound
+	}
+
+	for _, step := range req.Steps {
+		stepID, err := uuid.Parse(step.StepID)
+		if err != nil {
+			return errors.ErrInvalidStepID
+		}
+
+		step, err := s.stepRepo.FindByWorkflowIDAndStepID(ctx, workflowID, stepID)
+		if err != nil {
+			return errors.ErrStepNotFound
+		}
+
+		step.Position = step.Position
+		if err := s.stepRepo.Update(ctx, &step); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

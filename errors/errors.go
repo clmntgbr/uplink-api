@@ -9,6 +9,8 @@ var (
 	ErrProjectNotFound         = errors.New("project not found")
 	ErrWorkflowsNotFound       = errors.New("workflows not found")
 	ErrWorkflowNotFound        = errors.New("workflow not found")
+	ErrInvalidStepID           = errors.New("invalid step id")
+	ErrStepNotFound            = errors.New("step not found")
 	ErrStepsNotFound           = errors.New("steps not found")
 	ErrEndpointsNotFound       = errors.New("endpoints not found")
 	ErrEndpointNotFound        = errors.New("endpoint not found")
