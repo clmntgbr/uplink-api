@@ -16,6 +16,7 @@ type StepOutput struct {
 }
 
 type CreateStepInput struct {
+	Name       string `json:"name" validate:"required,min=2,max=255"`
 	EndpointID string `json:"endpointId" validate:"required,uuid"`
 }
 

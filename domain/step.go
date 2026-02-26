@@ -8,6 +8,7 @@ import (
 
 type Step struct {
 	ID       uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	Name     string    `gorm:"not null" json:"name"`
 	Position int       `gorm:"not null" json:"position"`
 
 	EndpointID uuid.UUID `gorm:"type:uuid;not null" json:"endpoint_id"`

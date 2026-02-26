@@ -64,6 +64,7 @@ func (s *StepService) CreateStepByWorkflowID(ctx context.Context, projectID uuid
 		WorkflowID: workflowID,
 		Position:   int(count + 1),
 		EndpointID: endpoint.ID,
+		Name:       req.Name,
 	}
 
 	if err := s.stepRepo.Create(ctx, step); err != nil {
