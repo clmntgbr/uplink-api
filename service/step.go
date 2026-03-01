@@ -61,13 +61,14 @@ func (s *StepService) CreateStepByWorkflowID(ctx context.Context, projectID uuid
 	}
 
 	step := &domain.Step{
-		WorkflowID: workflowID,
-		Position:   int(count + 1),
-		EndpointID: endpoint.ID,
-		Name:       req.Name,
-		Header:     req.Header,
-		Body:       req.Body,
-		Query:      req.Query,
+		WorkflowID:   workflowID,
+		Position:     int(count + 1),
+		EndpointID:   endpoint.ID,
+		Name:         req.Name,
+		Header:       req.Header,
+		Body:         req.Body,
+		Query:        req.Query,
+		SetVariables: req.SetVariables,
 	}
 
 	if err := s.stepRepo.Create(ctx, step); err != nil {
@@ -75,6 +76,30 @@ func (s *StepService) CreateStepByWorkflowID(ctx context.Context, projectID uuid
 	}
 
 	return dto.NewStepOutput(*step), nil
+}
+
+func (s *StepService) UpdateStepByWorkflowID(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, stepID uuid.UUID, req dto.UpdateStepInput) (dto.StepOutput, error) {
+	_, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
+	if err != nil {
+		return dto.StepOutput{}, errors.ErrWorkflowNotFound
+	}
+
+	step, err := s.stepRepo.FindByWorkflowIDAndStepID(ctx, workflowID, stepID)
+	if err != nil {
+		return dto.StepOutput{}, errors.ErrStepNotFound
+	}
+
+	step.Name = req.Name
+	step.Header = req.Header
+	step.Body = req.Body
+	step.Query = req.Query
+	step.SetVariables = req.SetVariables
+
+	if err := s.stepRepo.Update(ctx, &step); err != nil {
+		return dto.StepOutput{}, err
+	}
+
+	return dto.NewStepOutput(step), nil
 }
 
 func (s *StepService) UpdateStepPosition(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateStepPositionInput) error {

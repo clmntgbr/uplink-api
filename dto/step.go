@@ -9,23 +9,35 @@ import (
 )
 
 type StepOutput struct {
-	ID        string          `json:"id"`
-	Position  int             `json:"position"`
-	Endpoint  *EndpointOutput `json:"endpoint"`
-	Header    datatypes.JSON  `json:"header"`
-	Body      datatypes.JSON  `json:"body"`
-	Query     datatypes.JSON  `json:"query"`
-	CreatedAt time.Time       `json:"createdAt"`
-	UpdatedAt time.Time       `json:"updatedAt"`
+	ID           string          `json:"id"`
+	Name         string          `json:"name"`
+	Position     int             `json:"position"`
+	Endpoint     *EndpointOutput `json:"endpoint"`
+	Header       datatypes.JSON  `json:"header"`
+	Body         datatypes.JSON  `json:"body"`
+	Query        datatypes.JSON  `json:"query"`
+	SetVariables datatypes.JSON  `json:"setVariables"`
+	CreatedAt    time.Time       `json:"createdAt"`
+	UpdatedAt    time.Time       `json:"updatedAt"`
 }
 
 type CreateStepInput struct {
 	Name       string `json:"name" validate:"required,min=2,max=255"`
 	EndpointID string `json:"endpointId" validate:"required,uuid"`
 
-	Header datatypes.JSON `json:"header" validate:"required,json"`
-	Body   datatypes.JSON `json:"body" validate:"required,json"`
-	Query  datatypes.JSON `json:"query" validate:"required,json"`
+	Header       datatypes.JSON `json:"header" validate:"required,json"`
+	Body         datatypes.JSON `json:"body" validate:"required,json"`
+	Query        datatypes.JSON `json:"query" validate:"required,json"`
+	SetVariables datatypes.JSON `json:"setVariables" validate:"required,json"`
+}
+
+type UpdateStepInput struct {
+	Name string `json:"name" validate:"required,min=2,max=255"`
+
+	Header       datatypes.JSON `json:"header" validate:"required,json"`
+	Body         datatypes.JSON `json:"body" validate:"required,json"`
+	Query        datatypes.JSON `json:"query" validate:"required,json"`
+	SetVariables datatypes.JSON `json:"setVariables" validate:"required,json"`
 }
 
 type UpdateStepPositionInput struct {
@@ -46,11 +58,16 @@ func NewStepOutput(step domain.Step) StepOutput {
 	}
 
 	return StepOutput{
-		ID:        step.ID.String(),
-		Position:  step.Position,
-		Endpoint:  endpoint,
-		CreatedAt: step.CreatedAt,
-		UpdatedAt: step.UpdatedAt,
+		ID:           step.ID.String(),
+		Name:         step.Name,
+		Position:     step.Position,
+		Endpoint:     endpoint,
+		Header:       step.Header,
+		Body:         step.Body,
+		Query:        step.Query,
+		SetVariables: step.SetVariables,
+		CreatedAt:    step.CreatedAt,
+		UpdatedAt:    step.UpdatedAt,
 	}
 }
 
