@@ -5,12 +5,16 @@ import (
 	"uplink-api/domain"
 
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 )
 
 type StepOutput struct {
 	ID        string          `json:"id"`
 	Position  int             `json:"position"`
 	Endpoint  *EndpointOutput `json:"endpoint"`
+	Header    datatypes.JSON  `json:"header"`
+	Body      datatypes.JSON  `json:"body"`
+	Query     datatypes.JSON  `json:"query"`
 	CreatedAt time.Time       `json:"createdAt"`
 	UpdatedAt time.Time       `json:"updatedAt"`
 }
@@ -18,6 +22,10 @@ type StepOutput struct {
 type CreateStepInput struct {
 	Name       string `json:"name" validate:"required,min=2,max=255"`
 	EndpointID string `json:"endpointId" validate:"required,uuid"`
+
+	Header datatypes.JSON `json:"header" validate:"required,json"`
+	Body   datatypes.JSON `json:"body" validate:"required,json"`
+	Query  datatypes.JSON `json:"query" validate:"required,json"`
 }
 
 type UpdateStepPositionInput struct {

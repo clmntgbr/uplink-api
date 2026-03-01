@@ -15,9 +15,10 @@ type Endpoint struct {
 	Method  string    `gorm:"not null" json:"method"`
 	Timeout int       `gorm:"not null" json:"timeout"`
 
-	Header datatypes.JSON `json:"header" gorm:"type:json"`
-	Body   datatypes.JSON `json:"body" gorm:"type:json"`
-	Query  datatypes.JSON `json:"query" gorm:"type:json"`
+	Header   datatypes.JSON `json:"header" gorm:"type:json"`
+	Body     datatypes.JSON `json:"body" gorm:"type:json"`
+	Query    datatypes.JSON `json:"query" gorm:"type:json"`
+	Response datatypes.JSON `json:"response" gorm:"type:json"`
 
 	ProjectID uuid.UUID `gorm:"type:uuid;not null" json:"project_id"`
 
