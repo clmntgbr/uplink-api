@@ -30,6 +30,12 @@ func (r *StepRepository) Update(ctx context.Context, step *domain.Step) error {
 	})
 }
 
+func (r *StepRepository) Delete(ctx context.Context, step *domain.Step) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		return tx.Delete(step).Error
+	})
+}
+
 func (r *StepRepository) FindAllByWorkflowID(ctx context.Context, workflowID uuid.UUID, q dto.PaginateQuery) ([]domain.Step, int64, error) {
 	var steps []domain.Step
 	var total int64

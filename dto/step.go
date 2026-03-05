@@ -34,10 +34,11 @@ type CreateStepInput struct {
 type UpdateStepInput struct {
 	Name string `json:"name" validate:"required,min=2,max=255"`
 
-	Header       datatypes.JSON `json:"header" validate:"required,json"`
-	Body         datatypes.JSON `json:"body" validate:"required,json"`
-	Query        datatypes.JSON `json:"query" validate:"required,json"`
-	SetVariables datatypes.JSON `json:"setVariables" validate:"required,json"`
+	Header          datatypes.JSON `json:"header" validate:"required,json"`
+	Body            datatypes.JSON `json:"body" validate:"required,json"`
+	Query           datatypes.JSON `json:"query" validate:"required,json"`
+	SetVariables    datatypes.JSON `json:"setVariables" validate:"required,json"`
+	UpdateVariables datatypes.JSON `json:"updateVariables" validate:"omitempty,json"`
 }
 
 type UpdateStepPositionInput struct {
