@@ -72,6 +72,9 @@ func (r *WorkflowRepository) FindByProjectIDAndWorkflowID(ctx context.Context, p
 	var workflow domain.Workflow
 
 	err := r.db.WithContext(ctx).
+		Preload("Steps", func(db *gorm.DB) *gorm.DB {
+			return db.Order("position ASC")
+		}).
 		Preload("Steps.Endpoint").
 		Where("project_id = ? AND id = ?", projectID, workflowID).
 		First(&workflow).Error
