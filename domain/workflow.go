@@ -11,8 +11,9 @@ type Workflow struct {
 	Name        string    `gorm:"not null" json:"name"`
 	Description string    `gorm:"null" json:"description"`
 
-	Steps     []Step    `gorm:"foreignKey:WorkflowID" json:"steps"`
-	ProjectID uuid.UUID `gorm:"type:uuid;not null" json:"project_id"`
+	Steps      []Step    `gorm:"foreignKey:WorkflowID" json:"steps"`
+	StepsCount int       `gorm:"->" json:"-"` // populated via subquery in list, not a DB column
+	ProjectID  uuid.UUID `gorm:"type:uuid;not null" json:"project_id"`
 
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`

@@ -26,13 +26,17 @@ type UpdateWorkflowInput struct {
 }
 
 func NewWorkflowOutput(workflow domain.Workflow) WorkflowOutput {
+	stepsCount := workflow.StepsCount
+	if stepsCount == 0 {
+		stepsCount = len(workflow.Steps)
+	}
 	return WorkflowOutput{
 		ID:          workflow.ID.String(),
 		Name:        workflow.Name,
 		Description: workflow.Description,
 		CreatedAt:   workflow.CreatedAt,
 		UpdatedAt:   workflow.UpdatedAt,
-		StepsCount:  len(workflow.Steps),
+		StepsCount:  stepsCount,
 		Steps:       NewStepsOutput(workflow.Steps),
 	}
 }

@@ -56,6 +56,7 @@ func (r *WorkflowRepository) FindAllByProjectID(ctx context.Context, projectID u
 	}
 
 	err := db.
+		Select("workflows.*, (SELECT COUNT(*) FROM steps WHERE steps.workflow_id = workflows.id) as steps_count").
 		Order(sortBy + " " + orderBy).
 		Limit(q.Limit).
 		Offset(q.Offset()).
