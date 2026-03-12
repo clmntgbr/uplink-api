@@ -120,12 +120,12 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	var req dto.ActivateProjectInput
-	if err := bindAndValidate(c, &req); err != nil {
-		return nil
+	projectID := c.Params("id")
+	if projectID == "" {
+		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}
 
-	projectUUID, err := uuid.Parse(req.ProjectID)
+	projectUUID, err := uuid.Parse(projectID)
 	if err != nil {
 		return sendBadRequest(c, errors.ErrInvalidProjectID)
 	}

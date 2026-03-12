@@ -115,37 +115,6 @@ func (h *WorkflowHandler) GetWorkflows(c fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(workflows)
 }
 
-func (h *WorkflowHandler) GetStepsByWorkflowID(c fiber.Ctx) error {
-	workflowID := c.Params("id")
-	if workflowID == "" {
-		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
-	}
-
-	workflowUUID, err := uuid.Parse(workflowID)
-	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
-	}
-
-	project, err := ctxutil.GetActiveProject(c)
-	if err != nil {
-		return sendUnauthorized(c)
-	}
-
-	var query dto.PaginateQuery
-	if err := c.Bind().Query(&query); err != nil {
-		return sendBadRequest(c, errors.ErrInvalidQueryParams)
-	}
-
-	query.Normalize()
-
-	steps, err := h.stepService.GetStepsByWorkflowID(c.Context(), project.ID, workflowUUID, query)
-	if err != nil {
-		return handleError(c, err)
-	}
-
-	return c.Status(fiber.StatusOK).JSON(steps)
-}
-
 func (h *WorkflowHandler) CreateStepByWorkflowID(c fiber.Ctx) error {
 	var req dto.CreateStepInput
 	if err := bindAndValidate(c, &req); err != nil {

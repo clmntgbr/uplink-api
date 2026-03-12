@@ -12,6 +12,7 @@ type StepOutput struct {
 	ID           string          `json:"id"`
 	Name         string          `json:"name"`
 	Position     int             `json:"position"`
+	URL          string          `json:"url"`
 	Endpoint     *EndpointOutput `json:"endpoint"`
 	Header       datatypes.JSON  `json:"header"`
 	Body         datatypes.JSON  `json:"body"`
@@ -23,6 +24,7 @@ type StepOutput struct {
 
 type CreateStepInput struct {
 	Name       string `json:"name" validate:"required,min=2,max=255"`
+	URL        string `json:"url" validate:"required,url"`
 	EndpointID string `json:"endpointId" validate:"required,uuid"`
 
 	Header       datatypes.JSON `json:"header" validate:"required,json"`
@@ -33,6 +35,7 @@ type CreateStepInput struct {
 
 type UpdateStepInput struct {
 	Name string `json:"name" validate:"required,min=2,max=255"`
+	URL  string `json:"url" validate:"required,url"`
 
 	Header          datatypes.JSON `json:"header" validate:"required,json"`
 	Body            datatypes.JSON `json:"body" validate:"required,json"`
@@ -62,6 +65,7 @@ func NewStepOutput(step domain.Step) StepOutput {
 		ID:           step.ID.String(),
 		Name:         step.Name,
 		Position:     step.Position,
+		URL:          step.URL,
 		Endpoint:     endpoint,
 		Header:       step.Header,
 		Body:         step.Body,

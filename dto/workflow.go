@@ -6,11 +6,13 @@ import (
 )
 
 type WorkflowOutput struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	ID          string       `json:"id"`
+	Name        string       `json:"name"`
+	Description string       `json:"description"`
+	CreatedAt   time.Time    `json:"createdAt"`
+	UpdatedAt   time.Time    `json:"updatedAt"`
+	StepsCount  int          `json:"stepsCount"`
+	Steps       []StepOutput `json:"steps"`
 }
 
 type CreateWorkflowInput struct {
@@ -30,6 +32,8 @@ func NewWorkflowOutput(workflow domain.Workflow) WorkflowOutput {
 		Description: workflow.Description,
 		CreatedAt:   workflow.CreatedAt,
 		UpdatedAt:   workflow.UpdatedAt,
+		StepsCount:  len(workflow.Steps),
+		Steps:       NewStepsOutput(workflow.Steps),
 	}
 }
 

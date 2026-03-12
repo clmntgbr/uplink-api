@@ -75,7 +75,7 @@ func setupProjectRoutes(api fiber.Router, deps Dependencies) {
 	api.Get("/projects/:id", projectHandler.GetProjectByID)
 	api.Post("/projects", projectHandler.CreateProject)
 	api.Put("/projects/:id", projectHandler.UpdateProject)
-	api.Post("/projects/activate", projectHandler.ActivateProject)
+	api.Post("/projects/:id/activate", projectHandler.ActivateProject)
 }
 
 func setupEndpointRoutes(api fiber.Router, deps Dependencies) {
@@ -94,10 +94,9 @@ func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {
 	api.Post("/workflows", workflowHandler.CreateWorkflow)
 	api.Put("/workflows/:id", workflowHandler.UpdateWorkflow)
 	api.Get("/workflows/:id", workflowHandler.GetWorkflowByID)
-	api.Get("/workflows/:id/steps", workflowHandler.GetStepsByWorkflowID)
 	api.Post("/workflows/:id/steps", workflowHandler.CreateStepByWorkflowID)
 	api.Put("/workflows/:id/steps/:stepId", workflowHandler.UpdateStepByWorkflowID)
 	api.Delete("/workflows/:id/steps/:stepId", workflowHandler.DeleteStepByWorkflowID)
 	api.Post("/workflows/:id/steps/:stepId/duplicate", workflowHandler.DuplicateStepByWorkflowID)
-	api.Post("/workflows/:id/steps/position", workflowHandler.UpdateStepPosition)
+	api.Put("/workflows/:id/steps/reorder", workflowHandler.UpdateStepPosition)
 }

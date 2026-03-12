@@ -11,6 +11,7 @@ type Step struct {
 	ID       uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
 	Name     string    `gorm:"not null" json:"name"`
 	Position int       `gorm:"not null" json:"position"`
+	URL      string    `gorm:"not null" json:"url"`
 
 	EndpointID uuid.UUID `gorm:"type:uuid;not null" json:"endpoint_id"`
 	WorkflowID uuid.UUID `gorm:"type:uuid;not null" json:"workflow_id"`

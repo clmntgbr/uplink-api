@@ -20,10 +20,6 @@ type UpdateProjectInput struct {
 	Name string `json:"name" validate:"required,min=2,max=255"`
 }
 
-type ActivateProjectInput struct {
-	ProjectID string `json:"projectId" validate:"required"`
-}
-
 func NewProjectOutput(project domain.Project, activeProjectID uuid.UUID) ProjectOutput {
 	isActive := false
 	if activeProjectID != uuid.Nil && activeProjectID == project.ID {
