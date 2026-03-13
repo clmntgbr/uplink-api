@@ -26,7 +26,7 @@ func (r *WorkflowRepository) Create(ctx context.Context, workflow *domain.Workfl
 
 func (r *WorkflowRepository) Update(ctx context.Context, workflow *domain.Workflow) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return tx.Model(workflow).Updates(workflow).Error
+		return tx.Model(workflow).Select("Name", "Description").Updates(workflow).Error
 	})
 }
 
