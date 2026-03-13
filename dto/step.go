@@ -44,7 +44,7 @@ type UpdateStepInput struct {
 	UpdateVariables datatypes.JSON `json:"updateVariables" validate:"omitempty,json"`
 }
 
-type UpdateStepPositionInput struct {
+type UpdateReorderStepsInput struct {
 	Steps []StepPosition `json:"steps" validate:"required,min=1,max=1000,dive"`
 }
 

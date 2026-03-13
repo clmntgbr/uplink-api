@@ -98,5 +98,5 @@ func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {
 	api.Put("/workflows/:id/steps/:stepId", workflowHandler.UpdateStepByWorkflowID)
 	api.Delete("/workflows/:id/steps/:stepId", workflowHandler.DeleteStepByWorkflowID)
 	api.Post("/workflows/:id/steps/:stepId/duplicate", workflowHandler.DuplicateStepByWorkflowID)
-	api.Put("/workflows/:id/reorder/steps", workflowHandler.UpdateStepPosition)
+	api.Put("/workflows/:id/reorder/steps", workflowHandler.UpdateReorderSteps)
 }

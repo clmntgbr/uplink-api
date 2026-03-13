@@ -253,8 +253,8 @@ func (h *WorkflowHandler) DuplicateStepByWorkflowID(c fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(step)
 }
 
-func (h *WorkflowHandler) UpdateStepPosition(c fiber.Ctx) error {
-	var req dto.UpdateStepPositionInput
+func (h *WorkflowHandler) UpdateReorderSteps(c fiber.Ctx) error {
+	var req dto.UpdateReorderStepsInput
 	if err := bindAndValidate(c, &req); err != nil {
 		return nil
 	}
@@ -274,7 +274,7 @@ func (h *WorkflowHandler) UpdateStepPosition(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	workflow, err := h.stepService.UpdateStepPosition(c.Context(), activeProject.ID, workflowUUID, req)
+	workflow, err := h.stepService.UpdateReorderSteps(c.Context(), activeProject.ID, workflowUUID, req)
 	if err != nil {
 		return handleError(c, err)
 	}

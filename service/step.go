@@ -142,7 +142,7 @@ func (s *StepService) DuplicateStepByWorkflowID(ctx context.Context, projectID u
 	return dto.NewStepOutput(*dupeStep), nil
 }
 
-func (s *StepService) UpdateStepPosition(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateStepPositionInput) (dto.WorkflowOutput, error) {
+func (s *StepService) UpdateReorderSteps(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateReorderStepsInput) (dto.WorkflowOutput, error) {
 	_, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
 	if err != nil {
 		return dto.WorkflowOutput{}, errors.ErrWorkflowNotFound
