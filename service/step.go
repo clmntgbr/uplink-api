@@ -142,28 +142,33 @@ func (s *StepService) DuplicateStepByWorkflowID(ctx context.Context, projectID u
 	return dto.NewStepOutput(*dupeStep), nil
 }
 
-func (s *StepService) UpdateStepPosition(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateStepPositionInput) error {
+func (s *StepService) UpdateStepPosition(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID, req dto.UpdateStepPositionInput) (dto.WorkflowOutput, error) {
 	_, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
 	if err != nil {
-		return errors.ErrWorkflowNotFound
+		return dto.WorkflowOutput{}, errors.ErrWorkflowNotFound
 	}
 
 	for _, item := range req.Steps {
 		itemID, err := uuid.Parse(item.StepID)
 		if err != nil {
-			return errors.ErrInvalidStepID
+			return dto.WorkflowOutput{}, errors.ErrInvalidStepID
 		}
 
 		step, err := s.stepRepo.FindByWorkflowIDAndStepID(ctx, workflowID, itemID)
 		if err != nil {
-			return errors.ErrStepNotFound
+			return dto.WorkflowOutput{}, errors.ErrStepNotFound
 		}
 
 		step.Position = item.Position
 		if err := s.stepRepo.Update(ctx, &step); err != nil {
-			return err
+			return dto.WorkflowOutput{}, err
 		}
 	}
 
-	return nil
+	workflow, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
+	if err != nil {
+		return dto.WorkflowOutput{}, errors.ErrWorkflowNotFound
+	}
+
+	return dto.NewWorkflowOutput(*workflow), nil
 }

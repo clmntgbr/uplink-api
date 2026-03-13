@@ -274,11 +274,10 @@ func (h *WorkflowHandler) UpdateStepPosition(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	if err := h.stepService.UpdateStepPosition(c.Context(), activeProject.ID, workflowUUID, req); err != nil {
+	workflow, err := h.stepService.UpdateStepPosition(c.Context(), activeProject.ID, workflowUUID, req)
+	if err != nil {
 		return handleError(c, err)
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Step position updated successfully",
-	})
+	return c.Status(fiber.StatusOK).JSON(workflow)
 }
