@@ -7,7 +7,6 @@ import (
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/google/uuid"
 )
 
 type WorkflowHandler struct {
@@ -45,14 +44,9 @@ func (h *WorkflowHandler) UpdateWorkflow(c fiber.Ctx) error {
 		return nil
 	}
 
-	workflowID := c.Params("id")
-	if workflowID == "" {
-		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
-	}
-
-	workflowUUID, err := uuid.Parse(workflowID)
+	workflowUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidWorkflowID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
+		return err
 	}
 
 	activeProject, err := ctxutil.GetActiveProject(c)
@@ -69,14 +63,9 @@ func (h *WorkflowHandler) UpdateWorkflow(c fiber.Ctx) error {
 }
 
 func (h *WorkflowHandler) GetWorkflowByID(c fiber.Ctx) error {
-	workflowID := c.Params("id")
-	if workflowID == "" {
-		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
-	}
-
-	workflowUUID, err := uuid.Parse(workflowID)
+	workflowUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidWorkflowID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidWorkflowID)
+		return err
 	}
 
 	project, err := ctxutil.GetActiveProject(c)

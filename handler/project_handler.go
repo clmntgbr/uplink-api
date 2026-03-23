@@ -34,9 +34,8 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 	query.Normalize()
 
 	projects, err := h.projectService.GetProjects(c.Context(), user, query)
-
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(projects)
@@ -48,19 +47,14 @@ func (h *ProjectHandler) GetProjectByID(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	projectID := c.Params("id")
-	if projectID == "" {
-		return sendBadRequest(c, errors.ErrInvalidProjectID)
-	}
-
-	projectUUID, err := uuid.Parse(projectID)
+	projectUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidProjectID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidProjectID)
+		return err
 	}
 
 	project, err := h.projectService.GetProjectByID(c.Context(), user, projectUUID)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(project)
@@ -79,7 +73,7 @@ func (h *ProjectHandler) CreateProject(c fiber.Ctx) error {
 
 	project, err := h.projectService.CreateProject(c.Context(), user, req)
 	if err != nil {
-		return sendBadRequest(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(project)
@@ -96,19 +90,14 @@ func (h *ProjectHandler) UpdateProject(c fiber.Ctx) error {
 		return nil
 	}
 
-	projectID := c.Params("id")
-	if projectID == "" {
-		return sendBadRequest(c, errors.ErrInvalidProjectID)
-	}
-
-	projectUUID, err := uuid.Parse(projectID)
+	projectUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidProjectID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidProjectID)
+		return err
 	}
 
 	project, err := h.projectService.UpdateProject(c.Context(), user, projectUUID, req)
 	if err != nil {
-		return sendBadRequest(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(project)
@@ -120,19 +109,14 @@ func (h *ProjectHandler) ActivateProject(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	projectID := c.Params("id")
-	if projectID == "" {
-		return sendBadRequest(c, errors.ErrInvalidProjectID)
-	}
-
-	projectUUID, err := uuid.Parse(projectID)
+	projectUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidProjectID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidProjectID)
+		return err
 	}
 
 	project, err := h.projectService.ActivateProject(c.Context(), user.ID, projectUUID)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	ctxutil.SetActiveProject(c, project)

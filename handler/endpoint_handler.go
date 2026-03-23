@@ -33,7 +33,7 @@ func (h *EndpointHandler) CreateEndpoint(c fiber.Ctx) error {
 
 	endpoint, err := h.endpointService.CreateEndpoint(c.Context(), activeProject.ID, req)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(endpoint)
@@ -54,21 +54,16 @@ func (h *EndpointHandler) GetEndpoints(c fiber.Ctx) error {
 
 	endpoints, err := h.endpointService.GetEndpoints(c.Context(), activeProject.ID, query)
 	if err != nil {
-		return sendInternalError(c, err)
+		return handleError(c, err)
 	}
 
 	return c.Status(fiber.StatusOK).JSON(endpoints)
 }
 
 func (h *EndpointHandler) GetEndpointByID(c fiber.Ctx) error {
-	endpointID := c.Params("id")
-	if endpointID == "" {
-		return sendBadRequest(c, errors.ErrInvalidEndpointID)
-	}
-
-	endpointUUID, err := uuid.Parse(endpointID)
+	endpointUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidEndpointID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidEndpointID)
+		return err
 	}
 
 	project, err := ctxutil.GetActiveProject(c)
@@ -90,14 +85,9 @@ func (h *EndpointHandler) UpdateEndpoint(c fiber.Ctx) error {
 		return nil
 	}
 
-	endpointID := c.Params("id")
-	if endpointID == "" {
-		return sendBadRequest(c, errors.ErrInvalidEndpointID)
-	}
-
-	endpointUUID, err := uuid.Parse(endpointID)
+	endpointUUID, err := parseUUIDParam(c, "id", errors.ErrInvalidEndpointID)
 	if err != nil {
-		return sendBadRequest(c, errors.ErrInvalidEndpointID)
+		return err
 	}
 
 	activeProject, err := ctxutil.GetActiveProject(c)

@@ -5,6 +5,7 @@ import (
 	"uplink-api/validator"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/google/uuid"
 )
 
 func bindAndValidate(c fiber.Ctx, req interface{}) error {
@@ -52,13 +53,27 @@ func sendNotFound(c fiber.Ctx, err error) error {
 
 func handleError(c fiber.Ctx, err error) error {
 	switch err {
-	case errors.ErrWorkflowNotFound, errors.ErrProjectNotFound, errors.ErrUserNotFound, errors.ErrEndpointNotFound:
+	case errors.ErrWorkflowNotFound, errors.ErrProjectNotFound, errors.ErrUserNotFound, errors.ErrEndpointNotFound, errors.ErrStepNotFound:
 		return sendNotFound(c, err)
 	case errors.ErrUserNotAuthenticated:
 		return sendUnauthorized(c)
-	case errors.ErrInvalidWorkflowID, errors.ErrInvalidProjectID, errors.ErrInvalidQueryParams, errors.ErrInvalidRequestBody:
+	case errors.ErrInvalidWorkflowID, errors.ErrInvalidProjectID, errors.ErrInvalidEndpointID, errors.ErrInvalidStepID, errors.ErrInvalidQueryParams, errors.ErrInvalidRequestBody, errors.ErrMaxProjectsReached:
 		return sendBadRequest(c, err)
 	default:
 		return sendInternalError(c, err)
 	}
+}
+
+func parseUUIDParam(c fiber.Ctx, param string, customErr error) (uuid.UUID, error) {
+	raw := c.Params(param)
+	if raw == "" {
+		sendBadRequest(c, customErr)
+		return uuid.Nil, customErr
+	}
+	parsed, err := uuid.Parse(raw)
+	if err != nil {
+		sendBadRequest(c, customErr)
+		return uuid.Nil, customErr
+	}
+	return parsed, nil
 }
