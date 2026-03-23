@@ -21,7 +21,6 @@ type Dependencies struct {
 	ProjectService      *service.ProjectService
 	EndpointService     *service.EndpointService
 	WorkflowService     *service.WorkflowService
-	StepService         *service.StepService
 }
 
 func Setup(app *fiber.App, deps Dependencies) {
@@ -88,15 +87,10 @@ func setupEndpointRoutes(api fiber.Router, deps Dependencies) {
 }
 
 func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {
-	workflowHandler := handler.NewWorkflowHandler(deps.WorkflowService, deps.StepService)
+	workflowHandler := handler.NewWorkflowHandler(deps.WorkflowService)
 
 	api.Get("/workflows", workflowHandler.GetWorkflows)
 	api.Post("/workflows", workflowHandler.CreateWorkflow)
 	api.Put("/workflows/:id", workflowHandler.UpdateWorkflow)
 	api.Get("/workflows/:id", workflowHandler.GetWorkflowByID)
-	api.Post("/workflows/:id/steps", workflowHandler.CreateStepByWorkflowID)
-	api.Put("/workflows/:id/steps/:stepId", workflowHandler.UpdateStepByWorkflowID)
-	api.Delete("/workflows/:id/steps/:stepId", workflowHandler.DeleteStepByWorkflowID)
-	api.Post("/workflows/:id/steps/:stepId/duplicate", workflowHandler.DuplicateStepByWorkflowID)
-	api.Put("/workflows/:id/reorder/steps", workflowHandler.UpdateReorderSteps)
 }
