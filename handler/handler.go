@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"uplink-api/dto"
 	"uplink-api/errors"
 	"uplink-api/validator"
 
