@@ -7,7 +7,6 @@ import (
 	"uplink-api/service"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/google/uuid"
 )
 
 type EndpointHandler struct {
