@@ -77,3 +77,13 @@ func parseUUIDParam(c fiber.Ctx, param string, customErr error) (uuid.UUID, erro
 	}
 	return parsed, nil
 }
+
+func bindPaginateQuery(c fiber.Ctx) (dto.PaginateQuery, error) {
+	var query dto.PaginateQuery
+	if err := c.Bind().Query(&query); err != nil {
+		sendBadRequest(c, errors.ErrInvalidQueryParams)
+		return query, errors.ErrInvalidQueryParams
+	}
+	query.Normalize()
+	return query, nil
+}

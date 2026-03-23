@@ -25,12 +25,10 @@ func (h *ProjectHandler) GetProjects(c fiber.Ctx) error {
 		return sendUnauthorized(c)
 	}
 
-	var query dto.PaginateQuery
-	if err := c.Bind().Query(&query); err != nil {
-		return sendBadRequest(c, errors.ErrInvalidQueryParams)
+	query, err := bindPaginateQuery(c)
+	if err != nil {
+		return err
 	}
-
-	query.Normalize()
 
 	projects, err := h.projectService.GetProjects(c.Context(), user, query)
 	if err != nil {
