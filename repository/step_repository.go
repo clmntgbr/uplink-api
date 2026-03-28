@@ -64,6 +64,26 @@ func (r *StepRepository) FindByID(ctx context.Context, stepID uuid.UUID) (*domai
 	return &step, nil
 }
 
+func (r *StepRepository) FindByIDAndWorkflowID(ctx context.Context, stepID uuid.UUID, workflowID uuid.UUID) (*domain.Step, error) {
+	var step domain.Step
+	err := r.db.WithContext(ctx).
+		Preload("Endpoint").
+		Where("id = ? AND workflow_id = ?", stepID, workflowID).
+		First(&step).Error
+	if err != nil {
+		return nil, err
+	}
+	return &step, nil
+}
+
+func (r *StepRepository) UpdateName(ctx context.Context, stepID uuid.UUID, workflowID uuid.UUID, name string) error {
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		return tx.Model(&domain.Step{}).
+			Where("id = ? AND workflow_id = ?", stepID, workflowID).
+			Update("name", name).Error
+	})
+}
+
 func (r *StepRepository) UpdatePositionAndIndex(ctx context.Context, stepID uuid.UUID, workflowID uuid.UUID, position domain.Position, index int) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		return tx.Model(&domain.Step{}).

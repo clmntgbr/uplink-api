@@ -32,6 +32,11 @@ type UpdateStepInput struct {
 	Index      string   `json:"index" validate:"required"`
 }
 
+type UpdateStepDetailsInput struct {
+	Name       string `json:"name" validate:"required,min=2,max=255"`
+	WorkflowID string `json:"workflowId" validate:"required,uuid"`
+}
+
 func NewStepOutput(step domain.Step) StepOutput {
 	var endpoint *EndpointOutput
 	if step.Endpoint.ID != uuid.Nil {
