@@ -32,6 +32,7 @@ func AutoMigrate(db *gorm.DB) {
 		&domain.Endpoint{},
 		&domain.Step{},
 		&domain.Workflow{},
+		&domain.Connection{},
 	)
 
 	if err != nil {

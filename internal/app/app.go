@@ -25,6 +25,7 @@ func New(cfg *config.Config) *App {
 	endpointRepo := repository.NewEndpointRepository(db)
 	workflowRepo := repository.NewWorkflowRepository(db)
 	stepRepo := repository.NewStepRepository(db)
+	connectionRepo := repository.NewConnectionRepository(db)
 
 	projectRules := rules.NewProjectRules(projectRepo)
 
@@ -32,7 +33,7 @@ func New(cfg *config.Config) *App {
 	userService := service.NewUserService()
 	projectService := service.NewProjectService(projectRepo, userRepo, projectRules)
 	endpointService := service.NewEndpointService(endpointRepo, projectRepo, userRepo)
-	workflowService := service.NewWorkflowService(workflowRepo)
+	workflowService := service.NewWorkflowService(workflowRepo, stepRepo, connectionRepo)
 
 	app := fiber.New()
 

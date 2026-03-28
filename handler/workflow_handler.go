@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"uplink-api/ctxutil"
 	"uplink-api/dto"
 	"uplink-api/errors"
@@ -48,6 +49,8 @@ func (h *WorkflowHandler) UpdateWorkflow(c fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println("workflowUUID", workflowUUID)
 
 	activeProject, err := ctxutil.GetActiveProject(c)
 	if err != nil {

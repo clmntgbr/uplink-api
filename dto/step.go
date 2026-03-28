@@ -5,52 +5,40 @@ import (
 	"uplink-api/domain"
 
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
 )
 
+type Position struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
 type StepOutput struct {
-	ID           string          `json:"id"`
-	Name         string          `json:"name"`
-	Position     int             `json:"position"`
-	URL          string          `json:"url"`
-	Endpoint     *EndpointOutput `json:"endpoint"`
-	Header       datatypes.JSON  `json:"header"`
-	Body         datatypes.JSON  `json:"body"`
-	Query        datatypes.JSON  `json:"query"`
-	SetVariables datatypes.JSON  `json:"setVariables"`
-	CreatedAt    time.Time       `json:"createdAt"`
-	UpdatedAt    time.Time       `json:"updatedAt"`
+	ID          string          `json:"id"`
+	Name        string          `json:"name"`
+	Position    Position        `json:"position"`
+	Description string          `json:"description,omitempty"`
+	Index       int             `json:"index"`
+	Endpoint    *EndpointOutput `json:"endpoint,omitempty"`
+	EndpointID  string          `json:"endpointId"`
+	CreatedAt   time.Time       `json:"createdAt"`
+	UpdatedAt   time.Time       `json:"updatedAt"`
 }
 
 type CreateStepInput struct {
-	Name       string `json:"name" validate:"required,min=2,max=255"`
-	URL        string `json:"url" validate:"required,url"`
-	EndpointID string `json:"endpointId" validate:"required,uuid"`
-
-	Header       datatypes.JSON `json:"header" validate:"required,json"`
-	Body         datatypes.JSON `json:"body" validate:"required,json"`
-	Query        datatypes.JSON `json:"query" validate:"required,json"`
-	SetVariables datatypes.JSON `json:"setVariables" validate:"required,json"`
+	Name        string   `json:"name" validate:"required,min=2,max=255"`
+	Description string   `json:"description,omitempty"`
+	EndpointID  string   `json:"endpointId" validate:"required,uuid"`
+	Position    Position `json:"position" validate:"required"`
+	Index       int      `json:"index" validate:"required,min=0"`
 }
 
 type UpdateStepInput struct {
-	Name string `json:"name" validate:"required,min=2,max=255"`
-	URL  string `json:"url" validate:"required,url"`
-
-	Header          datatypes.JSON `json:"header" validate:"required,json"`
-	Body            datatypes.JSON `json:"body" validate:"required,json"`
-	Query           datatypes.JSON `json:"query" validate:"required,json"`
-	SetVariables    datatypes.JSON `json:"setVariables" validate:"required,json"`
-	UpdateVariables datatypes.JSON `json:"updateVariables" validate:"omitempty,json"`
-}
-
-type UpdateReorderStepsInput struct {
-	Steps []StepPosition `json:"steps" validate:"required,min=1,max=1000,dive"`
-}
-
-type StepPosition struct {
-	StepID   string `json:"stepId" validate:"required,uuid"`
-	Position int    `json:"position" validate:"required,min=1,max=1000,number"`
+	ID          string   `json:"id" validate:"omitempty,uuid"`
+	Name        string   `json:"name" validate:"required,min=2,max=255"`
+	Description string   `json:"description,omitempty"`
+	EndpointID  string   `json:"endpointId" validate:"required,uuid"`
+	Position    Position `json:"position" validate:"required"`
+	Index       string   `json:"index" validate:"required"`
 }
 
 func NewStepOutput(step domain.Step) StepOutput {
@@ -61,17 +49,15 @@ func NewStepOutput(step domain.Step) StepOutput {
 	}
 
 	return StepOutput{
-		ID:           step.ID.String(),
-		Name:         step.Name,
-		Position:     step.Position,
-		URL:          step.URL,
-		Endpoint:     endpoint,
-		Header:       step.Header,
-		Body:         step.Body,
-		Query:        step.Query,
-		SetVariables: step.SetVariables,
-		CreatedAt:    step.CreatedAt,
-		UpdatedAt:    step.UpdatedAt,
+		ID:          step.ID.String(),
+		Name:        step.Name,
+		Description: step.Description,
+		Position:    Position{X: step.Position.X, Y: step.Position.Y},
+		Index:       step.Index,
+		Endpoint:    endpoint,
+		EndpointID:  step.EndpointID.String(),
+		CreatedAt:   step.CreatedAt,
+		UpdatedAt:   step.UpdatedAt,
 	}
 }
 
