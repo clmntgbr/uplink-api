@@ -69,16 +69,39 @@ func (s *WorkflowService) UpdateWorkflow(ctx context.Context, projectID uuid.UUI
 }
 
 func (s *WorkflowService) upsertSteps(ctx context.Context, workflowID uuid.UUID, stepsInput []dto.UpdateStepInput) error {
-	if len(stepsInput) == 0 {
-		return s.stepRepo.DeleteByWorkflowID(ctx, workflowID)
-	}
-
-	if err := s.stepRepo.DeleteByWorkflowID(ctx, workflowID); err != nil {
+	existingSteps, err := s.stepRepo.FindByWorkflowID(ctx, workflowID)
+	if err != nil {
 		return err
 	}
 
-	stepsToCreate := make([]*domain.Step, 0, len(stepsInput))
+	receivedStepIDs := make(map[uuid.UUID]bool)
 	for _, stepInput := range stepsInput {
+		stepUUID, err := uuid.Parse(stepInput.ID)
+		if err != nil {
+			return errors.ErrInvalidRequestBody
+		}
+		receivedStepIDs[stepUUID] = true
+	}
+
+	stepsToDelete := make([]uuid.UUID, 0)
+	for _, existingStep := range existingSteps {
+		if !receivedStepIDs[existingStep.ID] {
+			stepsToDelete = append(stepsToDelete, existingStep.ID)
+		}
+	}
+
+	if len(stepsToDelete) > 0 {
+		if err := s.stepRepo.DeleteByIDs(ctx, stepsToDelete); err != nil {
+			return err
+		}
+	}
+
+	for _, stepInput := range stepsInput {
+		stepUUID, err := uuid.Parse(stepInput.ID)
+		if err != nil {
+			return errors.ErrInvalidRequestBody
+		}
+
 		endpointUUID, err := uuid.Parse(stepInput.EndpointID)
 		if err != nil {
 			return errors.ErrInvalidRequestBody
@@ -87,26 +110,29 @@ func (s *WorkflowService) upsertSteps(ctx context.Context, workflowID uuid.UUID,
 		index := 0
 		fmt.Sscanf(stepInput.Index, "%d", &index)
 
-		step := &domain.Step{
-			Name:        stepInput.Name,
-			Description: stepInput.Description,
-			Position:    domain.Position{X: stepInput.Position.X, Y: stepInput.Position.Y},
-			Index:       index,
-			EndpointID:  endpointUUID,
-			WorkflowID:  workflowID,
-		}
+		position := domain.Position{X: stepInput.Position.X, Y: stepInput.Position.Y}
 
-		if stepInput.ID != "" {
-			stepUUID, err := uuid.Parse(stepInput.ID)
-			if err == nil {
-				step.ID = stepUUID
+		existingStep, err := s.stepRepo.FindByID(ctx, stepUUID)
+		if err != nil {
+			newStep := &domain.Step{
+				ID:         stepUUID,
+				Name:       stepInput.Name,
+				Position:   position,
+				Index:      index,
+				EndpointID: endpointUUID,
+				WorkflowID: workflowID,
+			}
+			if err := s.stepRepo.Create(ctx, newStep); err != nil {
+				return err
+			}
+		} else {
+			if err := s.stepRepo.UpdatePositionAndIndex(ctx, existingStep.ID, workflowID, position, index); err != nil {
+				return err
 			}
 		}
-
-		stepsToCreate = append(stepsToCreate, step)
 	}
 
-	return s.stepRepo.CreateBatch(ctx, stepsToCreate)
+	return nil
 }
 
 func (s *WorkflowService) upsertConnections(ctx context.Context, workflowID uuid.UUID, connectionsInput []dto.UpdateConnectionInput) error {

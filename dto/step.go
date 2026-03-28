@@ -24,21 +24,12 @@ type StepOutput struct {
 	UpdatedAt   time.Time       `json:"updatedAt"`
 }
 
-type CreateStepInput struct {
-	Name        string   `json:"name" validate:"required,min=2,max=255"`
-	Description string   `json:"description,omitempty"`
-	EndpointID  string   `json:"endpointId" validate:"required,uuid"`
-	Position    Position `json:"position" validate:"required"`
-	Index       int      `json:"index" validate:"required,min=0"`
-}
-
 type UpdateStepInput struct {
-	ID          string   `json:"id" validate:"omitempty,uuid"`
-	Name        string   `json:"name" validate:"required,min=2,max=255"`
-	Description string   `json:"description,omitempty"`
-	EndpointID  string   `json:"endpointId" validate:"required,uuid"`
-	Position    Position `json:"position" validate:"required"`
-	Index       string   `json:"index" validate:"required"`
+	ID         string   `json:"id" validate:"required,uuid"`
+	Name       string   `json:"name" validate:"required,min=2,max=255"`
+	EndpointID string   `json:"endpointId" validate:"required,uuid"`
+	Position   Position `json:"position" validate:"required"`
+	Index      string   `json:"index" validate:"required"`
 }
 
 func NewStepOutput(step domain.Step) StepOutput {
