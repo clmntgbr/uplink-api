@@ -12,10 +12,11 @@ type Position struct {
 }
 
 type Step struct {
-	ID       uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
-	Name     string    `gorm:"not null" json:"name"`
-	Position Position  `gorm:"embedded;embeddedPrefix:position_" json:"position"`
-	Index    int       `gorm:"not null" json:"index"`
+	ID          uuid.UUID `gorm:"type:uuid;primaryKey;default:gen_random_uuid()" json:"id"`
+	Name        string    `gorm:"not null" json:"name"`
+	Description string    `gorm:"null" json:"description"`
+	Position    Position  `gorm:"embedded;embeddedPrefix:position_" json:"position"`
+	Index       int       `gorm:"not null" json:"index"`
 
 	EndpointID uuid.UUID `gorm:"type:uuid;not null" json:"endpoint_id"`
 	WorkflowID uuid.UUID `gorm:"type:uuid;not null" json:"workflow_id"`

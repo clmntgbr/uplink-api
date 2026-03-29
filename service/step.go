@@ -38,6 +38,7 @@ func (s *StepService) UpdateStep(ctx context.Context, projectID uuid.UUID, stepI
 	}
 
 	step.Name = req.Name
+	step.Description = req.Description
 
 	if req.EndpointID != "" {
 		endpointUUID, err := uuid.Parse(req.EndpointID)
