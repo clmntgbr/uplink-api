@@ -34,7 +34,7 @@ func (r *StepRepository) CreateBatch(ctx context.Context, steps []*domain.Step) 
 
 func (r *StepRepository) Update(ctx context.Context, step *domain.Step) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return tx.Model(step).Select("Name", "Description").Updates(step).Error
+		return tx.Model(step).Select("Name", "EndpointID").Updates(step).Error
 	})
 }
 

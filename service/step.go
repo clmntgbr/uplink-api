@@ -38,7 +38,14 @@ func (s *StepService) UpdateStep(ctx context.Context, projectID uuid.UUID, stepI
 	}
 
 	step.Name = req.Name
-	step.Description = req.Description
+
+	if req.EndpointID != "" {
+		endpointUUID, err := uuid.Parse(req.EndpointID)
+		if err != nil {
+			return dto.StepOutput{}, errors.ErrInvalidRequestBody
+		}
+		step.EndpointID = endpointUUID
+	}
 
 	if err := s.stepRepo.Update(ctx, step); err != nil {
 		return dto.StepOutput{}, err
