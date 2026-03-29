@@ -34,7 +34,7 @@ func (r *StepRepository) CreateBatch(ctx context.Context, steps []*domain.Step) 
 
 func (r *StepRepository) Update(ctx context.Context, step *domain.Step) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return tx.Model(step).Updates(step).Error
+		return tx.Model(step).Select("Name", "Description").Updates(step).Error
 	})
 }
 
@@ -74,14 +74,6 @@ func (r *StepRepository) FindByIDAndWorkflowID(ctx context.Context, stepID uuid.
 		return nil, err
 	}
 	return &step, nil
-}
-
-func (r *StepRepository) UpdateName(ctx context.Context, stepID uuid.UUID, workflowID uuid.UUID, name string) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		return tx.Model(&domain.Step{}).
-			Where("id = ? AND workflow_id = ?", stepID, workflowID).
-			Update("name", name).Error
-	})
 }
 
 func (r *StepRepository) UpdatePositionAndIndex(ctx context.Context, stepID uuid.UUID, workflowID uuid.UUID, position domain.Position, index int) error {

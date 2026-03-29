@@ -37,14 +37,12 @@ func (s *StepService) UpdateStep(ctx context.Context, projectID uuid.UUID, stepI
 		return dto.StepOutput{}, errors.ErrStepNotFound
 	}
 
-	if err := s.stepRepo.UpdateName(ctx, step.ID, workflow.ID, req.Name); err != nil {
+	step.Name = req.Name
+	step.Description = req.Description
+
+	if err := s.stepRepo.Update(ctx, step); err != nil {
 		return dto.StepOutput{}, err
 	}
 
-	updatedStep, err := s.stepRepo.FindByIDAndWorkflowID(ctx, stepID, workflow.ID)
-	if err != nil {
-		return dto.StepOutput{}, errors.ErrStepNotFound
-	}
-
-	return dto.NewStepOutput(*updatedStep), nil
+	return dto.NewStepOutput(*step), nil
 }

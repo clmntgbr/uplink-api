@@ -33,8 +33,9 @@ type UpdateStepInput struct {
 }
 
 type UpdateStepDetailsInput struct {
-	Name       string `json:"name" validate:"required,min=2,max=255"`
-	WorkflowID string `json:"workflowId" validate:"required,uuid"`
+	Name        string `json:"name" validate:"required,min=2,max=255"`
+	Description string `json:"description" validate:"omitempty,min=2,max=255"`
+	WorkflowID  string `json:"workflowId" validate:"required,uuid"`
 }
 
 func NewStepOutput(step domain.Step) StepOutput {
