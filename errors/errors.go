@@ -27,4 +27,5 @@ var (
 	ErrValidationFailed        = errors.New("validation failed")
 	ErrInvalidWorkflowID       = errors.New("invalid workflow id")
 	ErrInvalidEndpointID       = errors.New("invalid endpoint id")
+	ErrInvalidConnectionID     = errors.New("invalid connection id")
 )

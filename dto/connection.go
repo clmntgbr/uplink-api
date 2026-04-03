@@ -6,17 +6,22 @@ import (
 )
 
 type ConnectionOutput struct {
-	ID   string `json:"id"`
-	From string `json:"from"`
-	To   string `json:"to"`
+	ID        string    `json:"id"`
+	From      string    `json:"from"`
+	To        string    `json:"to"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-type UpdateConnectionInput struct {
-	ID   string `json:"id" validate:"omitempty,uuid"`
-	From string `json:"from" validate:"required,uuid"`
-	To   string `json:"to" validate:"required,uuid"`
+type CreateConnectionInput struct {
+	WorkflowID string `json:"workflowId" validate:"required,uuid"`
+	From       string `json:"from" validate:"required,uuid"`
+	To         string `json:"to" validate:"required,uuid"`
+}
+
+type DeleteConnectionInput struct {
+	WorkflowID string `json:"workflowId" validate:"required,uuid"`
+	ID         string `json:"id" validate:"required,uuid"`
 }
 
 func NewConnectionOutput(connection domain.Connection) ConnectionOutput {

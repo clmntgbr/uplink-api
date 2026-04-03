@@ -22,6 +22,7 @@ type Dependencies struct {
 	EndpointService     *service.EndpointService
 	WorkflowService     *service.WorkflowService
 	StepService         *service.StepService
+	ConnectionService   *service.ConnectionService
 }
 
 func Setup(app *fiber.App, deps Dependencies) {
@@ -46,6 +47,7 @@ func setupAPIRoutes(app *fiber.App, deps Dependencies) {
 	setupUserRoutes(api, deps)
 	setupProjectRoutes(api, deps)
 	setupWorkflowRoutes(api, deps)
+	setupConnectionRoutes(api, deps)
 	setupEndpointRoutes(api, deps)
 	setupStepRoutes(api, deps)
 }
@@ -95,6 +97,13 @@ func setupWorkflowRoutes(api fiber.Router, deps Dependencies) {
 	api.Post("/workflows", workflowHandler.CreateWorkflow)
 	api.Put("/workflows/:id", workflowHandler.UpdateWorkflow)
 	api.Get("/workflows/:id", workflowHandler.GetWorkflowByID)
+}
+
+func setupConnectionRoutes(api fiber.Router, deps Dependencies) {
+	connectionHandler := handler.NewConnectionHandler(deps.ConnectionService)
+
+	api.Delete("/connections/:id", connectionHandler.DeleteConnection)
+	api.Post("/connections", connectionHandler.CreateConnection)
 }
 
 func setupStepRoutes(api fiber.Router, deps Dependencies) {

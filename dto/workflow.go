@@ -22,10 +22,9 @@ type CreateWorkflowInput struct {
 }
 
 type UpdateWorkflowInput struct {
-	Name        string                  `json:"name" validate:"required,min=2,max=255"`
-	Description string                  `json:"description" validate:"omitempty,min=2,max=255"`
-	Steps       []UpdateStepInput       `json:"steps" validate:"omitempty,dive"`
-	Connections []UpdateConnectionInput `json:"connections" validate:"omitempty,dive"`
+	Name        string            `json:"name" validate:"required,min=2,max=255"`
+	Description string            `json:"description" validate:"omitempty,min=2,max=255"`
+	Steps       []UpdateStepInput `json:"steps" validate:"omitempty,dive"`
 }
 
 func NewWorkflowOutput(workflow domain.Workflow) WorkflowOutput {

@@ -56,10 +56,6 @@ func (s *WorkflowService) UpdateWorkflow(ctx context.Context, projectID uuid.UUI
 		return dto.WorkflowOutput{}, err
 	}
 
-	if err := s.upsertConnections(ctx, workflow.ID, req.Connections); err != nil {
-		return dto.WorkflowOutput{}, err
-	}
-
 	updatedWorkflow, err := s.workflowRepo.FindByProjectIDAndWorkflowID(ctx, projectID, workflowID)
 	if err != nil {
 		return dto.WorkflowOutput{}, errors.ErrWorkflowNotFound
@@ -113,6 +109,7 @@ func (s *WorkflowService) upsertSteps(ctx context.Context, workflowID uuid.UUID,
 		position := domain.Position{X: stepInput.Position.X, Y: stepInput.Position.Y}
 
 		existingStep, err := s.stepRepo.FindByID(ctx, stepUUID)
+
 		if existingStep == nil {
 			newStep := &domain.Step{
 				ID:         stepUUID,
@@ -131,40 +128,6 @@ func (s *WorkflowService) upsertSteps(ctx context.Context, workflowID uuid.UUID,
 	}
 
 	return nil
-}
-
-func (s *WorkflowService) upsertConnections(ctx context.Context, workflowID uuid.UUID, connectionsInput []dto.UpdateConnectionInput) error {
-	if len(connectionsInput) == 0 {
-		return s.connectionRepo.DeleteByWorkflowID(ctx, workflowID)
-	}
-
-	if err := s.connectionRepo.DeleteByWorkflowID(ctx, workflowID); err != nil {
-		return err
-	}
-
-	connectionsToCreate := make([]*domain.Connection, 0, len(connectionsInput))
-	for _, connInput := range connectionsInput {
-		fromUUID, err := uuid.Parse(connInput.From)
-		if err != nil {
-			return errors.ErrInvalidRequestBody
-		}
-
-		toUUID, err := uuid.Parse(connInput.To)
-		if err != nil {
-			return errors.ErrInvalidRequestBody
-		}
-
-		connection := &domain.Connection{
-			FromStepID: fromUUID,
-			ToStepID:   toUUID,
-			WorkflowID: workflowID,
-			ID:         uuid.New(),
-		}
-
-		connectionsToCreate = append(connectionsToCreate, connection)
-	}
-
-	return s.connectionRepo.CreateBatch(ctx, connectionsToCreate)
 }
 
 func (s *WorkflowService) GetWorkflowByID(ctx context.Context, projectID uuid.UUID, workflowID uuid.UUID) (dto.WorkflowOutput, error) {
