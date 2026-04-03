@@ -160,13 +160,7 @@ func (s *WorkflowService) upsertConnections(ctx context.Context, workflowID uuid
 			FromStepID: fromUUID,
 			ToStepID:   toUUID,
 			WorkflowID: workflowID,
-		}
-
-		if connInput.ID != "" {
-			connUUID, err := uuid.Parse(connInput.ID)
-			if err == nil {
-				connection.ID = connUUID
-			}
+			ID:         uuid.New(),
 		}
 
 		connectionsToCreate = append(connectionsToCreate, connection)
