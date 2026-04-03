@@ -113,7 +113,7 @@ func (s *WorkflowService) upsertSteps(ctx context.Context, workflowID uuid.UUID,
 		position := domain.Position{X: stepInput.Position.X, Y: stepInput.Position.Y}
 
 		existingStep, err := s.stepRepo.FindByID(ctx, stepUUID)
-		if err != nil {
+		if existingStep == nil {
 			newStep := &domain.Step{
 				ID:         stepUUID,
 				Name:       stepInput.Name,
@@ -122,9 +122,7 @@ func (s *WorkflowService) upsertSteps(ctx context.Context, workflowID uuid.UUID,
 				EndpointID: endpointUUID,
 				WorkflowID: workflowID,
 			}
-			if err := s.stepRepo.Create(ctx, newStep); err != nil {
-				return err
-			}
+			s.stepRepo.Create(ctx, newStep)
 		} else {
 			if err := s.stepRepo.UpdatePositionAndIndex(ctx, existingStep.ID, workflowID, position, index); err != nil {
 				return err
